@@ -1,0 +1,1 @@
+.tab-container>ul>li*4>a[href="tab-$"]>{Tab $}

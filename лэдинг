@@ -1,0 +1,18 @@
+1. Mozilla
+	1) firebug
+	2) web developer
+	3) color zilla
+2. brackets
+	1) emmet
+	2) fonts
+	3) ASCII Art generator
+3. bootstrap
+
+4.
+	ctrl + e
+
+	 <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <div class="container">
+        <div class="row">
+           <div class="col-md-12 text-center">

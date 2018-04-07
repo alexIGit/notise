@@ -1,0 +1,110 @@
+==== Установка ====
+
+ ---- django girls: https://tutorial.djangogirls.org/ru/installation/?q=
+ 1. виртуальное окружение 
+
+ sudo apt-get install python3-venv
+ python3 -m venv myvenv
+
+ source myvenv/bin/activate
+ 
+ # далее работаем с запущенным venv,
+ # перед командой будет преффикс (myvenv)$...
+
+ 2. Установка Django
+
+ pip install --upgrade pip
+ pip install django~=1.11.0
+
+===================
+
+ django-admin startproject mysite .
+
+ ---- /settings.py ...
+ 
+ TIME_ZONE = 'Europe/Moscow'
+ LANGUAGE_CODE = 'ru-ru'
+
+ ALLOWED_HOSTS = ['127.0.0.1', 'localhost' 'djalex.pythonanywhere.com']
+
+ +
+ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+ ---- 
+ python manage.py migrate	- создание БД
+
+ python manage.py runserver
+ python manage.py runserver 0:8000
+
+
+ pytho manage.py startapp blog
+
+ ---- mysite/settings.py 
+
+ INSTALLED_APPS = [
+    ...
+    'blog',
+ ]
+ ----
+ blog/models.py
+ ----
+ python manage.py makemigrations blog		-  добавление нашей модели в базу данных
+ python manage.py migrate blog
+
+
+ ==== Администрирование
+
+ python manage.py createsuperuser
+	girl admingirl
+
+ ===============================
+
+ ==== pythonanywhere ====
+ ---- console
+ git clone
+ cd dj_girls
+ virtualenv --python=python3.6 myvenv
+ source myvenv/bin/activate
+ pip install django~=1.11.0
+ python manage.py migrate
+ python manage.py createsuperuser
+ ----
+ ---- WEB
+ Virtualenv:	/home/<your-username>/my-first-blog/myvenv/
+ WSGI configuration file: 
+import os
+import sys
+
+path = os.path.expanduser('~/my-first-blog')
+if path not in sys.path:
+    sys.path.append(path)
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'mysite.settings'
+
+from django.core.wsgi import get_wsgi_application
+from django.contrib.staticfiles.handlers import StaticFilesHandler
+application = StaticFilesHandler(get_wsgi_application())
+
+----
+
+ ========================
+
+ python manage.py shell 		- интерактивная консоль
+
+ ==========
+ ==== ссылки ====
+ ---- html
+ href="{% url 'post_new' %}"
+
+ ---- urls.py
+ urlpatterns = [ ... , url(r'^post/new/$', views.post_new, name='post_new'), ... ]
+
+ ---- views.py
+ from ____ import PostForm
+ 
+ def post_new(request):
+    form = PostForm()
+    return render(request, 'blog/post_edit.html', {'form':form})
+
+ ---- 
+ ================

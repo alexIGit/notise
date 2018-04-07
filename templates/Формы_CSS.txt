@@ -1,0 +1,17 @@
+
+
+---- Формы ------------
+ // обязательных для заполнения формы:
+	input:required {
+		background-color: lightyellow;
+	}
+ // формы, которые являются обязательными и в настоящее время содержат некорректные значения
+	input:required:invalid {
+		background-color: lightyellow;
+	}
+ // 
+
+
+
+
+------------------

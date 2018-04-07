@@ -1,0 +1,7 @@
+bower_components/
+node_modules/
+tmp/
+/bower.json
+/package.json
+/package-lock.json
+/gulpfile.js

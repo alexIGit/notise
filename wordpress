@@ -1,0 +1,41 @@
+==== натяжка шаблона ==== 
+ https://codex.wordpress.org/%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5_%D1%82%D0%B5%D0%BC
+1. style.css	-> @import url('path');
+	<link rel="stylesheet" href=" <?php bloginfo('stylesheet_url'); ?>">
+
+2. header sidebar footer  -> .php
+3. перед </head>
+	<?php wp_enqueue_script("jquery"); ?>
+	<?php wp_head(); ?>
+4. Перед </body>
+   	<?php wp_footer(); ?>
+5. functions.php 	-> подключаем скрипты
+	function wpbootstrap_scripts_with_jqery(){
+		wp_register_script('bootstrap', get_template_directory_uri() . '/vendor/bootstrap/js/bootstrap.min.js', array('jquery'));
+		wp_register_script('easing', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js');
+		wp_register_script('freelancer', get_template_directory_uri() . 'js/freelancer.min.js', array('jquery'));
+
+		wp_enqueue_script('bootstrap');
+		wp_enqueue_script('easing');
+		wp_enqueue_script('freelancer');
+	}
+
+	add_action('wp_enqueue_scripts', 'wpbootstrap_scripts_with_jqery');
+	
+6. functions.php
+	show_admin_bar(false);
+7. IMG
+	src="<?php echo get_template_directory_uri()?>/img/... "
+  лучше: в админ панели при добавлении страниц указывать полные пути src="../wp-content/themes/islamov/img/... .png"
+
+8. Добавление страниц [админ-панель] img редактируем полные пути к файлам src="../wp-content/themes/islamov/img/... .png"
+   1) index.php 
+	<?php get_header(); ?>
+		<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+		    <?php the_content(); ?>
+		<?php endwhile; else: ?>
+		    <p><?php _e('Sorry, no posts matched your criteria.'); ?></p>
+		<?php endif; ?>
+	<?php get_footer(); ?>
+   2) в навигации поменять ul> li*n -> ul> <?php wp_list_pages(array('title_li' => '')); ?>
+========================

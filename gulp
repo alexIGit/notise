@@ -1,0 +1,235 @@
+0:00 суть процессов 
+2:50 как увидеть ошибку без открытого терминала, плагин gulp-notify
+3:50 почему необходимо сигнализировать об окончании обрабокти ошибки - this.end()
+4:45 применение gulp-notify
+5:15 кастомизация вывода ошибки
+6:30 как отследить ошибку на нескольких потоках
+7:10 плагин gulp-plumber
+9:50 плагин multipipe
+11:50 плагин stream-combiner2
+
+==== Установка =====================================
+после nodejs + git
+ npm init
+ |npm i gulp 	- будем подключать в конфиг-ре через require(gulp)
+ |npm i -g gulp	- чтобы была доступна сама команда gulp
+ |
+ | или 
+ |
+ |npm install gulpjs/gulp#4.0
+
+ ---- package.json				| вместо этого использовал 
+  "scripts": {					| export PATH
+	... ,					|
+    "gulp": "./node_modules/./bin/gulp"		|
+  },						|
+
+ |export PATH=./node_modules/.bin:$PATH
+ |
+ | или	// сработала 1-я
+ |
+ |export PATH=./node_modules/.bin:../node_modules/.bin:../../node_modules/.bin:$PATH
+
+ ~~~~ документация
+ npm install gulp-cli -g
+ npm install gulp -D
+ ~~~~~~~~~~~~~~~~~
+
+ gulpfile.js
+
+===== Плагины ====================================================
+ ---- ---- Использование
+ const stylus = require('gulp-stylus');
+ .pipe( stylus() )
+ ---- ---- Установка
+ npm i -D	gulp-stylus
+	  	stylus
+
+ // 	-D: --save-dev
+	-d: --loglevel info
+	
+
+ ==== Plugins ====
+
+ ---- стили ----
+  $.sourcemaps
+			sourcemaps.init()		// в начале
+ 			sourcemaps.write('.')		// итоговый, ставиться после препроцессора
+  $.sass
+  $.nitify
+  $.uncss
+  $.cssnano({autoprefixer})	
+			autoprefixer(['last 15 versions', '> 1%', 'ie 8', 'ie 7'], { cascade: true }) 
+
+ --------------- 
+ ---- img ------
+
+  $.imagemin
+ ---------------
+ ---- js -------
+
+  $.uglify	
+ ---------------
+ ---- дополнительые плагины 
+
+  -debug	- вывод информации о действиях в консоль
+		  debug({title:'src'})
+  -newer	- копирует только последние измененные файлы (от слова - новее)
+		  newer('public')
+		  -> img, html, fonts
+  -remember	- // надо дополнительно написать функцию на событие unlink
+  -cached	- // вместо {sinse: gulp.lastRun('styles')}
+		  // добавить в функцию delete
+  -notify	- обработка ошибок  
+	          | .on('error', notify.onError(function (err) {
+            	  |	return { title: 'Styles', message: err.message }; })
+ 	
+  -rigger	- сборка файла из шаблонов (exp: html)
+	//= footer.html
+
+  -concat	- конкатенация нескольких файлов в один
+  -if		- ветвленные таски
+
+
+	-svg-sprite	- svgSpryte	- создание спрайтов
+  	-uglify		-		- минифицирует js
+	
+	-rev		-		-| hash к имени
+	-rev-replace	- revReplace	-|
+	
+
+ browser-sync		-	
+			  require('browser-sync').create();
+			  | ... browserSync.init({ server: 'public'}); ...
+			  | browserSync.watch('public/**/*.*').on('change', browserSync.reload);
+ del			- удаление файлов // не плагин
+ path			- из относительного в абсолютный
+ multipipe		- обработка ошибок ( без .pipe() ) 
+			  | stiles ->
+			  | 	return multipipe( src - ... - dest ).on('error', notify.onError());
+
+ stream-combiner2	-
+			  require('stream-combiner2').obj;
+
+ ---- ---- Особенности использования .pipe( plugin() )
+	    кэш
+ remember('styles')
+ cached('styles')
+====================================================
+==== Консоль =======================================
+ gulp --tasks
+ gulp example
+ gulp styles
+
+ ---- server
+ sudo npm i -g node-static
+ cd public/
+ static
+ вводим адресную строку http://127.0.0.1:8080  без index.html
+ ----
+====================================================
+==== gulpfile.js ===================================
+gulp.*
+ .task()
+ .series()					- выполнение задач последовательно
+ .parallel()					- 		   параллельно
+
+ .src()
+ .src('frontend/**/*.styl')
+ .src('frontend/styles/**/*.styl', {base: 'frontend'})
+ .src('frontend/styles/**/*.css', {sinse: gulp.lastRun('styles')}
+ 
+ .pipe()	
+ .dest('dest')		- 
+ .watch('frontend/styles/**/*.*', gulp.series('styles')); // лучше создать отдельный таск, где будут все watch
+							  // и потом подключить через series( осн.задача., watch )
+
+
+process.on('exit')				- проверяет завершенность процесса задачи
+
+const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development';
+// переменные окружения на примере тригера - в каком состоянии проект - разработка или продакшн
+// в консоли указываем: NODE_ENV=production
+
+
+====================================================
+==== Vinyl ==========================================
+ ---- Vinyl-FS streams
+ gulp.src('source/**/*.{js,css}')	-> vinyl
+ vinyl					-> gulp.dest('dest')
+
+ ---- Vinyl
+ contents	
+	Buffer: gulp.src('src/**/*.*')
+	null: 	gulp.src('src/**/*.*', {read: false})
+ 	Stream: gulp.src('src/**/*.*', {buffer: false})
+
+ cwd = /my/project	- текущая директория
+ path			/my/project/src/js/menu/index.js
+	base		/my/project/src/
+	relative			js/menu/index.js
+	dirname		/my/project/src/js/menu/
+ 	basename				index.js
+	steam					index
+	extname					     .js
+ path, base -> relative, dirname, steam, extname
+ 
+
+====================================================
+==== Улучшение производительности ==================
+
+ > gulp-newer: 		независимые запуски
+ > gulp-remember:	кеширование результата
+ > gulp-cached:		исключение одинаковых файлов 
+			// лучше исп-ть {since: } 
+ > gulp-cache:		кеширование на диск
+====================================================
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+gulp.task('default', function(){
+    return gulp.src('source/**/*.*')
+        .on('data', function (file) {
+            console.log({
+                contents:   file.contents,
+                path:       file.path,
+                cwd:        file.cwd,
+                base:       file.base,
+                relative:   file.relative,
+                dirname:    file.dirname,
+                basename:   file.basename,
+                stem:       file.stem,
+                extname:    file.extname
+            });
+        })
+        .pipe(gulp.dest('dest'));
+});
+
+~~~~ remember ~~~~ cached ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+gulp.task('watch', function () {
+    gulp.watch('frontend/styles/**/*.css', gulp.series('styles')).on('unlink', function (filepath) {
+        remember.forget('styles', path.resolve(filepath));	// styles - назвавние кэша
+        delete cached.caches.styles[path.resolve(filepath)];	// remember('styles')
+    });
+    gulp.watch('frontend/assets/**/*.*', gulp.series('assets'));
+});
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~ resolver - решить проблему с путями для stylus~
+const resolver = require('stylus').resolver;
+.pipe(stylus({
+            define: {
+                url: resolver()
+            }
+        }))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+====================================================
+==== Ссылки ========================================
+https://github.com/gulpjs/vinyl
+https://github.com/sindresorhus/gulp-mocha
+https://github.com/robrich/gulp-if/
+https://github.com/gulpjs/gulp/blob/4.0/docs/recipes/handling-the-delete-event-on-watch.md
+https://github.com/tschaub/gulp-newer
+https://github.com/mklabs/tiny-lr
+https://github.com/juliangruber/multipipe
+====================================================
+

@@ -1,0 +1,9 @@
+==== настройка проекта 
+
+sudo npm i -g express
+express --help
+express -s -e 	
+npm i
+
+webStorm: конфигурация запуска
+=====

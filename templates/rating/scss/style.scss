@@ -1,0 +1,40 @@
+/*
+ * variables
+ */
+ $color-fill: orange;
+ $color-fill-hover: darken($color-fill, 10%);
+/*
+ *
+ */ 
+   .box{
+        display: inline-block;
+    }
+    .stars{
+        display: flex;
+        flex-flow: row-reverse;
+    }
+
+    svg{
+        width: 2em;
+        height: 2em;
+        fill: white;
+        pointer-events: none;
+    }
+    .star{
+        &:hover{
+            svg{
+                fill: $color-fill;
+            }
+            & ~ .star svg{
+                fill: $color-fill;
+            }
+        }
+        &.is-selected{
+            svg{
+                fill: $color-fill-hover;
+            }
+            & ~ .star svg{
+                fill: $color-fill-hover;
+            } 
+        }
+    }

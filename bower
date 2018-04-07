@@ -1,0 +1,13 @@
+==== Установка ====
+npm install -g bower
+===================
+==== Проект =======
+
+ bower i -S jquery
+ bower un -S jquery
+ bower init
+ bower list
+ bower check-new
+ bower-update 	
+ bower search jquery
+===================

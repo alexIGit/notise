@@ -1,0 +1,528 @@
+никсон 190
+---- логические операторы -----		|---- порязрядные -----------
+ &&					| -> &
+ and 	- низкоприоритетное "И" 	|
+ ||					| -> |
+ or  	- низкоприоритетное "ИЛИ"	|
+ ! 					| -> ~
+ xor	- исключающее "ИЛИ" : 1 0 -> true; 1 1 -> false; 0 0 -> false;	| -> ^
+-------------------------------
+---- кавычки ------------------
+ " "	- вычисляют значение переменной
+ ' '	- не вычисляют
+-------------------------------
+---- константы ----------------
+  define("ROOT_LOCATION", "/usr/local/www");
+ __LINE__
+ __FILE__
+ __DIR__
+ __FUNCTION__
+ __CLASS__
+ __METHOD__
+ __NAMESPACE__
+--------------------------------
+---- суперглобальные переменные-
+ $GLOBALS
+ $_SERVER
+ $_GET
+ $_POST
+ $_FILES
+ $_COOKIE
+ $_SESSION
+ $_REQUEST
+ $_ENV
+---------------------------------
+
+---- массивы ---------------------
+ $p[1] = "Copier";
+
+ $p = array("Copier", "Inkjet", "Laser", "Photo");
+
+ $p = array('copier'  => "Copier & Multipurpose",
+				 'inkjet' => "Inkjet Printer"
+				);
+ print_r($p);
+ -----------------------
+ foreach ($paper as $item) {
+		echo "$j: $item<br>";
+		++$j;
+	}
+ ------------------------------------
+ $paper = array('copier' => "Copier & Multipurpose",
+				   'inkjet' => "Inkjet Printer",
+				   'laser' 	=> "Laser Printer",
+				   'photo'	=> "Photographic Paper");
+			
+ foreach ($paper as $item => $description)
+	echo "$item: $description<br>";
+ 1-----------------------------------------
+ while (list($item, $description) = each($paper))
+			echo "$item: $description<br>";
+ ------------------------------
+ 	list($a, $b) = array('Alice', 'Bob');
+	echo "a=$a b=$b";
+ --------------------------------
+ $products = array(
+
+		'paper' => array(
+						'copier'=> "Copier & Multipurpose",
+						'inkjet'=> "Inkjet Printer",
+						'laser' => "Laser Printer",
+						'photo' => "Photographic Paper"),
+		'pens' => array(
+						'ball'	=> "Ball Point",
+						'hilite'=> "Highlighters",
+						'marker'=> "Markers"),
+		'misc' => array(
+						'tape'	=> "Sticky Tape",
+						'glue'	=> "Adhesives",
+						'clips' => "Paperclips")
+	);
+
+	echo "<pre>";
+
+	foreach ($products as $section => $items)
+		foreach ($items as $key => $value)
+			echo "$section:\t$key\t($value)<br>";
+	echo "</pre>";
+ -------------------------------------------
+
+ is_array()		- 
+ count()		- 
+ sort()			- 
+			  sort($fred, SORT_NUMERIC);
+			  sort($fred, SORT_STRING);
+ rsort()		- обратный порядок при сортировке
+			  rsort($fred, SORT_NUMERIC);
+			  rsort($fred, SORT_STRING);
+ shuffle()		- расположение элементов массива в случайном порядке // true or false
+ explode()		- из строки делает массив	
+			  $temp = explode(' ', "Это предложение из пяти слов");
+			  $temp = explode('***', "Это***предложение***со***звездочками");
+ extract()		- превратить пары «ключ — значение» из массива в переменные
+			  extract($_GET, EXTR_PREFIX_ALL, 'fromget');
+ compact()		- создать массив из переменных и их значений
+			  $fname = "Doctor"; $sname = "Who"; $planet = "Gallifrey"; $system = "Gridlock";
+			  $contact = compact('fname', 'sname', 'planet', 'system');
+ reset()		- вернуться к началу массива при переборе foreach...as или each
+			  reset($fred); 	// Отбрасывание возвращаемого значения
+			  $item = reset($fred); // Сохранение первого элемента массива в переменной $item
+ end()			- переместить внутренний указатель элемента массива на последний элемент
+ 			  end($fred);
+			  $item = end($fred);
+
+-----------------------------------
+ 
+----     -------------------
+ include  "library.php"		-
+ include_once			- вставляет файл, только 1 раз
+ require			- требует вставки
+ require_once			-
+-----------------------------
+
+---- Дата: date(" ", time()) ----
+
+ d - день с 0 (01 - 31)	
+ j - ----     ( 1 - 31)	
+
+ l - день недели полностью (Sunday) 	
+ N - ----------- от пон до вс (1 - 7)
+ w - ----------- от вс до суб (0 - 6)
+ D - ----------- из 3 букв (Mon)
+ 
+ S - суффикс для дня месца st, nd, rd, th
+ z - день года (1 - 365 )
+ W - номер недели в году (1 - 52)
+
+ F - название месяца (January)
+ M - --------------- (Jan)
+ m - номер месяца с 0 (01 - 12)
+ n - ------------     ( 1 - 12)
+ t - кол-во дней в месяце (28-31)
+ L - Високосный год (1 - 0)
+ Y - год х4 (2017)
+ y - --- х2 (17)
+
+ a - am rm
+ A - AM RM
+ h - час(12) с 0 (01 - 12)
+ g - ------      ( 1 - 12) 
+ H - ---(24) c 0 (01 - 24)
+ G - ------      ( 1 - 24)
+ i - минуты с 0 (00 - 59)
+ s - секунд с 0 (00 - 59)
+ ---- константы 
+ DATE_RSS, DATE_ATOM, DATE_COOKIE, DATE_W3C
+ ---- 
+ checkdate()	- проверка на допустимость даты
+---------------------------------
+
+---- работа с файлом ------------[175]
+ fopen("*.txt", 'w') 	- создать файл (w w+ a a+ r r+)
+ rwrite(1, 2) 		- записать в файл 1 текст 2
+ fclose()		- закрыть файл 
+ fgets()		- чтение 1-й строки
+ fread(1, n) 		- чтение из 1 n символов
+ copy(1, 2)		- создает копию 1, с названием 2
+ unlink()		- удаляет файл
+ fseek("файл", 0, SEEK_END)	- обновляет файл ( 0 - на сколько переместиь курсор
+	SEEK_END - перемещает курсор в конец,
+	SEEK_SET - ----------------- на конкретную позицию
+	SEEK_CUR - ----------------- от текущей позиции )
+ flock(file, LOCK_EX) 	- блокировка файла {if ( fclock() ) }
+ flock(file, LOCK_UN)	- разблокировка файла, ставится в конце редактирования
+ file_get_contents("http://oreilly.com") - получение фсего файла (в данном случае первой страницы сайта)
+--------------------------------
+
+
+
+
+-----------
+ htmlentities 		- преобразует все символы в HTML код
+ (int)			- преобразование в целое число
+ phpinfo()		-
+ strrev()		-
+ str_repeat("", n)
+ strtoupper() 		- 
+ -----lower()		-
+ ucfirst()		- переводит 1-ю букву в вверхний регистр
+
+ 
+ printf("%b %c %d %e %f %o %s %u %x %X", 2(1111011), ASCII({), 123, 1.230e+2, 123.000, 8(173), '123', 123, 16(7b), 16(7B) )
+ sprintf() 		- не отображается в браузере
+
+ function_exists("")	- проверка существования функции
+ file_exists("")	- ---------------------- файла
+
+ exec(escapeshellcmd($cmd), $output, $status) - cистемный вызов
+
+ isset()		- для проверки наличия значения у элемента $_POST['name']
+			  if (isset($_POST['name']))
+----------------------------------
+
+---- клонирование ---
+ I. неправильный		
+ $object1->name = "Alice";
+ $object2 = $object1;		// ссылается на тот же объект что 1-й
+ $object2->name = "Amy";
+ ------------------------
+ $object2 = clone $object1; 	// создаёт новый экземпляр класса
+
+--------------------------------
+---- Объекты ---------------------
+ class User {
+	function __construct($param1, $param2) {
+		// Сюда помещаются инструкции конструктора
+		public $username = "Guest";
+	}
+ }
+ 	--------------------------
+ class User {
+	function __destruct() {
+		// Сюда помещается код деструктора
+	}
+ }
+	---------------------------
+ Translate::lookup();			- испол-е статической функции (::)
+
+ class Translate {
+
+	const ENGLISH = 1;		- объявление констант
+	const SPANISH = 2;
+	
+	Static function lookup() {	- статичемкая функция
+		echo self::SPANISH;
+	}
+ }
+	---------------------------
+ --- область видимости ------------
+ public		- открытые	или var
+ protected	- защищенные 
+ private	- закрытые
+ --- наследование ----------------
+ extends
+ parent					[146] Роберт Никсон	
+ --- конструкторы подкласса ------
+
+ class Wildcat {
+	public $fur;
+	function __construct() {
+		$this->fur = "TRUE";
+	} }
+ class Tiger extends Wildcat {
+	public $stripes;
+	function __construct() {
+		parent::__construct(); 		- указывается конструктор родительского класса
+		$this->stripes = "TRUE";
+	} }
+ 	------------------------------
+ final function copyright() {}		- метод final 
+-------------------------------------
+
+---- Работа с базой данных ----------Роберт Никсон гл.10
+
+ --- login.php
+	$db_hostname = 'localhost';
+	$db_database = 'puplications';
+	$db_username = 'root';
+	$db_password = '';
+ ------------------------
+
+ // mysql_connect() 	- Подключение базы 
+	require_once 'login.php';
+	$db_server = mysql_connect($db_hostname, $db_username, $db_password);
+
+	if ( !$db_server ) die ( "Невозможно подключиться к MYSQL: ". mysql_error() );
+
+ // mysql_select_db()	- Выбор базы 
+	mysql_select_db($db_database) or die( "Невозможно выбрать базу данных: " . mysql_error() );
+
+	//создание и выполнение запроса // mysql_query()
+	$query = "SELECT * FROM Customers";
+	$result = mysql_query($query);
+	
+	if ( !$result ) die ("Сбой при доступе к базе данных: " . mysql_error() );
+	
+ // mysql_num_rows() // mysql_result()	- извлечение результата 
+
+	$rows = mysql_num_rows( $result );
+    I.
+	for ( $j = 0; $j < $rows ; ++$j ) {
+	 	echo 'Имя: ' . mysql_result($result, $j, 'Name').' ' . ' ';
+	 	...
+	}
+
+ //  mysql_fetch_row()			- извлечение строки (работает быстрее, чем предыдущий пример)
+    II.
+	for ( $i = 0; $i < $rows; ++$i ) {
+		$row = mysql_fetch_row($result);		// извлекает массив
+			echo 'Имя: '	. $row[0] . '<br>' ;
+			...
+	}
+
+ // mysql_close()			- отключение 
+	mysql_close($db_server);
+
+ // mysql_real_escape_string()		- чтобы удалить любые символы, которые злоумышленник может
+					вставить, пытаясь взломать или изменить вашу базу данных
+
+ // mysql_insert_id()			-
+------------------------------------------
+
+---- Использование расширения mysqli
+
+// Подключение базы 
+	require_once 'login.php';
+	$db_server = mysql_connect($db_hostname, $db_username, $db_password);
+	$connection = new mysqli( $db_hostname, $db_username, $db_password, $db_database );
+	if ( $connection -> connect_error ) die( $connection -> connect_error );
+
+// отправка запроса
+	$query = "SELECT * FROM cats";
+	$result = $connection -> query($query);
+	if ( !$result ) die ( $connection -> error );
+
+// извлечение результата
+  1.	$rows = $result->num_rows;
+
+	for ($j = 0 ; $j < $rows ; ++$j)
+	{
+		$result->data_seek($j);
+		echo 'Семейство: ' . $result->fetch_assoc()['family'] . '<br>';
+		$result->data_seek($j);
+		echo 'Имя: ' . $result->fetch_assoc()['name'] . '<br>';
+		$result->data_seek($j);
+		echo 'Возраст: ' . $result->fetch_assoc()['age'] . '<br>'.'<br>';
+	}
+
+	$result->close();
+	$connection->close();
+  -------------------------------------------
+  2. 	$rows = $result->num_rows;
+
+	for ($j = 0 ; $j < $rows ; ++$j)
+	{
+		$result->data_seek($j);
+
+		$row = $result -> fetch_array( MYSQLI_ASSOC );
+		echo 'Семейство: '. $row['family'] 	. '<br>';
+		echo 'Имя: ' 	  .	$row['name'] 	. '<br>';
+		echo 'Возраст: '  . $row['age'] 	. '<br>'.'<br>';
+	}
+
+	$result->close();
+	$connection->close();
+
+
+-----------------------------------
+
+---- Создание новой таблицы ------------------------ Никсон [271]
+	$query = "CREATE TABLE cats (
+				id SMALLINT NOT NULL AUTO_INCREMENT,
+				family VARCHAR(32) NOT NULL,
+				name VARCHAR(32) NOT NULL,
+				age TINYINT NOT NULL,
+				PRIMARY KEY (id)
+				)";
+
+	$result = mysql_query($query);
+
+	if ( !$result ) die ("Сбой при доступе к базе данных: " . mysql_error() );
+-----------------------------------
+
+---- описание таблицы -------------------------------- Никсон [272]
+	$query = "DESCRIBE cats ";
+
+	$result = mysql_query($query);
+
+	if ( !$result ) die ("Сбой при доступе к базе данных: " . mysql_error() );
+
+ 	$rows = mysql_num_rows($result);
+
+ 	echo "<table><tr>
+ 					<th>Column</th>
+ 					<th>Type</th>
+ 					<th>Null</th>
+ 					<th>Key</th>
+ 				</tr>";
+ 	for ( $j = 0; $j < $rows; ++$j )
+ 	{
+ 		$row = mysql_fetch_row($result);
+ 		echo "<tr>";
+
+			for ( $k = 0; $k < 4; ++$k )
+			{
+				echo "<td>$row[$k]</td>";
+			}
+
+ 		echo "</tr>";
+ 	} 
+	
+	echo "</table>";
+------------------------------------------
+
+---- Удаление таблицы --------------------[273]
+	$query = "DROP TABLE cats";
+	
+	$result = mysql_query($query);
+
+	if (!$result) die ("Сбой при доступе к базе данных: " . mysql_error());
+-------------------------------------------
+
+---- Добавление данных ---------------------
+	$query = "INSERT INTO cats VALUES(NULL, 'Lion', 'Leo', 4 ) ";
+
+	$result = mysql_query($query);
+
+	if ( !$result ) die ("Сбой при доступе к базе данных: " . mysql_error() );
+------------------------------------------------
+
+---- Формы -----------------
+	<form method="post" action="din.php">
+		Ванильное 	<input type="checkbox" name="ice[]" value="Vanilla">
+				<input type="submit">
+	</form>
+ _END;
+	$ice = $_POST['ice'];				// для извлечения данных из массива ice[]
+	foreach($ice as $item) echo "$item<br>";
+
+-----------------------------
+
+---- защита ----------------
+	function sanitizeString($var) {
+		$var = stripslashes($var);
+		$var = htmlentities($var);
+		$var = strip_tags($var);
+		return $var;
+	}
+	function sanitizeMySQL($connection, $var) { 	// Использование расширения mysqli
+		$var = $connection->real_escape_string($var);
+		$var = sanitizeString($var);
+		return $var;
+	}
+	$var = sanitizeString($_POST['user_input']);
+	$var = sanitizeMySQL($connection, $_POST['user_input']);
+
+----------------------------
+
+---- регулярные выражения ------------------
+
+ preg_match()	preg_match_all()	preg_replace()
+
+ $n = preg_match("/cats/i", "Cats are fun. I like cats.");	\\ $n=1, т.к true
+
+-------------------------------------------
+
+---- Черновик
+1.
+// Подключение базы  // mysql_connect()
+	require_once 'login.php';
+	$db_server = mysql_connect($db_hostname, $db_username, $db_password);
+
+	if ( !$db_server ) die ( "Невозможно подключиться к MYSQL: ". mysql_error() );
+
+	// Выбор базы // mysql_select_db()
+	mysql_select_db($db_database, $db_server) 
+		or die( "Невозможно выбрать базу данных: " . mysql_error() );
+
+	if ( isset( $_POST['delete']) && isset($_POST['isbn']) ) {
+
+		$isbn = get_post('isbn');
+		$query = "DELETE FROM Authors WHERE isbn = '$isbn' ";
+
+		if (!mysql_query( $query, $db_server) ) 
+			echo "Сбой при удалении данных: $query<br>". mysql_error() . "<br><br>";
+	}
+
+	if (isset($_POST['Author']) &&
+		isset($_POST['isbn']) ) {
+
+		$author 	= get_post('author');
+		$isbn 		= get_post('isbn'); 	
+
+		$query = "INSERT INTO Authors VALUES" . "('$isbn','$author's )";
+
+		if (!mysql_query( $query, $db_server) ) 
+			echo "Сбой при вставке данных: $query<br>". mysql_error() . "<br><br>";
+	}
+
+	echo <<<_END
+		<form action="din.php" method="post"><pre>
+			Author	<input type="text" name="author">
+			ISBN 	<input type="text" name="isbn">
+					<input type="submit" value="Добавить запись">
+		</pre></form>
+_END;
+
+	$query = "SELECT * FROM Authors";
+	$result = mysql_query($query);
+
+	if ( !$result ) die ("Сбой при подключении к базе данных: ". mysql_error() ) ;
+	$rows = mysql_num_rows($result);
+
+	for ($j = 0; $j < $rows; ++$j) {
+
+		$row = mysql_fetch_row($result);
+		echo <<<_END
+
+			<pre>
+				Author 	$row[1]
+				ISBN	$row[0]
+			</pre>
+			<form action="din.php" method="post">
+				<input type="hidden" name="delete" value="yes">
+				<input type="hidden" name="isbn" value="$row[0]">
+				<input type="submit" value="Удалить запись">
+			</form>
+_END;
+	}
+
+	mysql_close($db_server);
+
+	function get_post($var) {
+
+		return mysql_real_escape_string($_POST[$var]);
+	}
+--------------------------
+2. 
+

@@ -1,0 +1,137 @@
+@import url("http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css");
+/*
+**      Variables
+ */
+ // size
+ $tab-size-min-w: 320px;
+ $tab-size-max-w: 800px;
+ $tab-border-radius: 10px 10px 0 0;
+ // color
+ $tab-bgc-tabs: #f1f1f1;
+ $tab-bgc-content: #fff;
+
+ $tab-color-border: #ddd;      // border-tabs
+ $tab-color-content: #383838;
+ $tab-color-tabs: #aaa;
+ $tab-color-tabs-hover: #888;
+ $tab-color-tabs-act:#555;
+ $tab-bgc-tabs-act: $tab-bgc-content;
+ $tab-color-border-t-act: #093;
+
+ // font
+ $tab-fw: 600;
+ // animation
+ $tab-duration: 1s;
+/*
+**  responsive
+ */
+ $mobile-width: 380px;
+ $tablet-width: 768px;
+
+ @mixin mobile {
+    @media (max-width: #{$mobile-width}) {
+          @content;
+    }
+ }
+ @mixin df-tablet {
+    @media (min-width: #{$mobile-width + 1px}) and (max-width: #{$tablet-width}) {
+            @content;
+    }
+ }
+ @mixin df-media{
+    @media (min-width: #{$mobile-width + 1px}) and (max-width: #{$tablet-width}) {
+        @content;
+    }
+    @media (max-width: #{$mobile-width}) {
+        @content;
+    }
+ }
+/*
+ *  layout
+ */
+.tabs{
+    min-width:  $tab-size-min-w;
+    max-width:  $tab-size-max-w;
+    padding: 0;
+    margin: 0 auto;
+// /**/background-color: yellowgreen;
+
+    &>section{
+        background-color: $tab-bgc-content;
+        padding: 15px;     
+        border: 1px solid $tab-color-border;  
+        display: none;
+        &>p{
+            margin: 0;
+            line-height: 1.5;
+            color: $tab-color-content;
+
+            animation-duration: $tab-duration;
+            animation-fill-mode: both;
+            animation-name: fadeIn;
+        }
+    }
+    &>input{
+        position: absolute;
+        display: none;
+        
+        /* Стили для активной вкладки */
+        &:checked + label{
+            color: $tab-color-tabs-act;
+            border-top: 1px solid $tab-color-border-t-act;
+            border-bottom: 1px solid $tab-bgc-tabs-act;
+            background-color: $tab-bgc-tabs-act;
+        }
+    }
+    &>label{
+        display: inline-block;
+        margin: 0 0 -1px;
+        padding: 15px 25px;
+        font-weight: $tab-fw;
+        text-align: center;
+        color: $tab-color-tabs;
+        border: 1px solid $tab-color-border;
+        // border-width: 1px 1px 1px 1px;
+        background-color: $tab-bgc-tabs;
+        border-radius: $tab-border-radius;
+
+        @include df-media{
+            font-size: 0;
+        }
+        @include mobile{
+            padding: 15px;
+        }
+        /* Шрифт-иконки от Font Awesome в формате Unicode */
+        &:before{
+            font-family: fontawesome;
+            font-weight: normal;
+            margin-right: 10px;
+
+            @include df-media{
+                margin: 0;
+                font-size: 18px;
+            }
+        }
+        &[for*="1"]:before { content:"\f19a"; }
+        &[for*="2"]:before { content:"\f17a"; }
+        &[for*="3"]:before { content:"\f13b"; }
+        &[for*="4"]:before { content:"\f13a"; }
+
+        &:hover{
+            color: $tab-color-tabs-hover;
+            cursor: pointer;
+        }
+    }
+    
+}
+@keyframes fadeIn {
+    from    { opacity: 0; }
+    to      {opacity: 1;  }
+}
+/* Активация секций с помощью псевдокласса :checked */
+#tab1:checked~#content-tab1, 
+#tab2:checked~#content-tab2, 
+#tab3:checked~#content-tab3, 
+#tab4:checked~#content-tab4 {
+	display: block;
+}

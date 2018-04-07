@@ -1,0 +1,95 @@
+@charset "UTF-8";
+/* 	px		*/
+/*	hover	*/
+/*---- 	responsive		----*/
+/*---- 	Общие стили 	----*/
+* {
+  transition: 0.5s ease-in-out;
+  box-sizing: border-box; }
+
+body {
+  background-color: #566973; }
+
+/*---- 	Стили для меню 	----*/
+.toggle-nav {
+  display: none; }
+
+.menu {
+  width: 100%; }
+  .menu ul {
+    display: inline-block;
+    background-color: #398839;
+    width: 100%;
+    text-align: center; }
+  .menu li {
+    display: inline-block;
+    margin: 0 50px 0 0;
+    list-style: none;
+    font-size: 17px; }
+    .menu li:last-child {
+      margin-right: 0; }
+  .menu a {
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    transition: color linear 0.15s;
+    text-decoration: none; }
+    .menu a:hover, .menu .current-item {
+      color: #ddd; }
+
+/*---- 	Responsive 		----*/
+/*		dectop 				*/
+@media screen and (min-width: 861px) {
+  body {
+    background-color: yellow; }
+
+  .menu {
+    width: 100%;
+    padding: 10px 18px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15); } }
+/*		lg dectop 			*/
+/*		laptop 				*/
+@media screen and (max-width: 860px) {
+  body {
+    background-color: red; }
+
+  .menu {
+    position: relative;
+    display: inline-block;
+    width: 100%; }
+    .menu ul.active {
+      display: none; }
+    .menu ul {
+      width: 100%;
+      position: absolute;
+      top: 65%;
+      left: 0;
+      padding: 10px 18px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      /*	стрелка	*/ }
+    .menu li {
+      margin: 5px 0;
+      float: none;
+      display: block; }
+    .menu a {
+      display: block; }
+
+  .toggle-nav {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    display: inline-block;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+    background-color: #398839;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 20px;
+    transition: color linear 0.15s; }
+    .toggle-nav:hover, .toggle-nav.active {
+      color: #ddd;
+      cursor: pointer; }
+    .toggle-nav .open {
+      display: none; } }
+
+/*# sourceMappingURL=style.css.map */

@@ -1,0 +1,95 @@
+@charset "UTF-8";
+/*	only px	*/
+.toggle-nav {
+  display: none; }
+
+@media screen and (min-width: 860px) {
+  body {
+    /**/
+    background: yellow; }
+
+  .menu {
+    width: 100%;
+    padding: 10px 18px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+    background: #398839; } }
+.menu ul {
+  display: inline-block;
+  background: #398839; }
+.menu li {
+  margin: 0 50px 0 0;
+  float: left;
+  list-style: none;
+  font-size: 17px; }
+  .menu li:last-child {
+    margin-right: 0; }
+.menu a {
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  transition: color linear 0.15s; }
+  .menu a:hover {
+    text-decoration: none;
+    color: yellow; }
+.menu .current-item {
+  text-decoration: none;
+  color: yellow; }
+
+/*---- Responsive ----*/
+@media screen and (max-width: 1150px) {
+  .wrap {
+    width: 90%; } }
+@media screen and (max-width: 860px) {
+  body {
+    /**/
+    background: red; }
+
+  .menu {
+    position: relative;
+    display: inline-block;
+    width: 20%; }
+    .menu ul.active {
+      display: none; }
+    .menu ul {
+      width: 100%;
+      position: absolute;
+      top: 120%;
+      left: 0;
+      padding: 10px 18px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+      border-radius: 3px;
+      /*---- добавление стрелки ----*/ }
+      .menu ul:after {
+        width: 0;
+        height: 0;
+        position: absolute;
+        top: 0%;
+        left: 22px;
+        content: '';
+        transform: translate(0%, -100%);
+        border-left: 7px solid transparent;
+        border-right: 7px solid transparent;
+        border-bottom: 7px solid #398839; }
+    .menu li {
+      margin: 5px 0;
+      float: none;
+      display: block; }
+    .menu a {
+      display: block;
+      text-decoration: none; }
+
+  .toggle-nav {
+    padding: 20px;
+    float: left;
+    display: inline-block;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+    background: #398839;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 20px;
+    transition: color linear 0.15s; }
+    .toggle-nav:hover, .toggle-nav.active {
+      text-decoration: none;
+      color: yellow; } }
+
+/*# sourceMappingURL=style.css.map */

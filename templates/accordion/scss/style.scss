@@ -1,0 +1,107 @@
+/*
+ *      variables
+ */
+$ac-font-family: 'BebasNeueRegular', 'Arial Narrow', Arial, sans-serif;
+$ac-fz: 14px;
+$ac-bg-grad: gradient(linear, left top, left bottom, color-stop(1%,#ffffff), color-stop(100%,#eaeaea));   
+$ac-bg-label: linear-gradient(top, #ffffff 1%, #eaeaea 100%);
+
+$ac-color: #777;
+$ac-bgc-h: #fff;
+
+$ac-tx-sh: 1px 1px 1px rgba(255, 255, 255, 0.8);
+$ac-tx-sh-2: 0 1px 1px rgba(255, 255, 255, 0.6);
+
+$ac-color-input: #3d7489;
+$ac-bgc-input: #c6e1ec;
+
+
+$ac-bx-sh-1: 0 0 0 1px rgba(155, 155, 155, 0.3);
+$ac-bx-sh-2: 1px 0 0 1px rgba(255, 255, 255, 0.9) inset;
+$ac-bx-sh-3: 0 2px 2px rgba(0, 0, 0, 0.1);
+
+// $ac-bx-sh-1: 0;
+// $ac-bx-sh-2: 0;
+// $ac-bx-sh-3: 0;
+
+$ac-transition: 
+    height 0.3s ease-in-out,
+    box-shadow 0.6s linear;
+
+ 
+ /*
+  *     layout
+  */
+.ac-container{
+    width: 400px;
+    margin: 10px auto 30px; 
+
+/*  стили                           */    
+    label{
+        font-family: $ac-font-family;
+        position: relative;
+        z-index: 20;
+        display: block;
+        cursor: pointer;
+        background: $ac-bg-grad;
+        background: $ac-bg-label;
+        padding: 5px 20px;
+        height: 30px;
+        color: $ac-color;
+        text-shadow: $ac-tx-sh;
+        line-height: 33px;
+        font-size: $ac-fz*1.36;
+        box-shadow: $ac-bx-sh-1, $ac-bx-sh-2, $ac-bx-sh-3;
+
+        &:hover{
+            background: $ac-bgc-h;
+        }
+    }
+    input{
+        display: none;
+        &:checked + label,
+        &:checked + label:hover{
+            background: $ac-bgc-input;
+            color: $ac-color-input;
+            text-shadow: $ac-tx-sh-2;
+            box-shadow:$ac-bx-sh-1, $ac-bx-sh-3;
+        }
+        &:checked ~ article{
+            transition: $ac-transition;
+            height: 100px;
+            box-shadow: $ac-bx-sh-1;
+        }
+   }
+   article{
+       background: rgba(255, 255, 255, 0.5);
+       margin-top: -1px;
+       overflow: hidden;
+       height: 0;
+       position: relative;
+       z-index: 10;
+       transition: $ac-transition;
+   
+       p{
+           font-style: italic;
+           color: #777;
+           line-height: 23px;
+           font-size: $ac-fz;
+           padding: 20px;
+           text-shadow: $ac-tx-sh;
+       }
+    }
+} 
+/*      стрелочки вниз и вверх      */
+.ac-container label:hover:after,
+.ac-container input:checked + label:hover:after{
+    content: '\2193';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    right: 13px;
+    top: 7px;
+}
+.ac-container input:checked + label:hover:after {
+    content: '\2191';
+}
+

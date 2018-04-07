@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>  
+<head>
+	<meta charset="UTF-8">
+	<title>Респонзивное меню</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+	<label for="show-menu" class="show-menu">Показать меню</label>
+	<input type="checkbox" id="show-menu" role="button">
+
+	<ul id="menu" class="menu">
+		<li><a href="#">Home</a></li>
+		<li>
+			<a href="#">О нас &#8595;</a>
+			<ul class="hidden">
+				<li><a href="#">Кто мы</a></li>
+				<li><a href="#">Что мы делаем</a></li>
+			</ul>
+		</li>
+		<li>
+			<a href="#">Портфолио &#8595;</a>
+			<ul class="hidden">
+				<li><a href="#">Фотографии</a></li>
+				<li><a href="#">Наши работы</a></li>
+			</ul>
+		</li>
+		<li><a href="#">Новости</a></li>
+		<li><a href="#">Контакты</a></li>
+	</ul>
+
+	
+	<script src="js/main.js"></script>
+</body>
+</html>

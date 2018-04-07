@@ -1,0 +1,22 @@
+
+---- Формы ---------------
+
+ |-- Специализированная проверка -- Mакдональд.HTML5 [150]
+
+	<label for="comments">When did you first know you wanted to be a zookeeper?</label>
+	<textarea id="comments" oninput="validateComments(this)"></textarea>
+
+	function validateComments(input) { 
+		if (input.value.length < 20) {
+			input.setCustomValidity("You need to comment in more detail.");
+		}
+		else {
+			// Длина комментария отвечает требованию.
+			// Очищаем предыдущие сообщения об ошибке.
+			input.setCustomValidity("");
+		}
+	}
+ |--------------------------
+
+
+--------------------------

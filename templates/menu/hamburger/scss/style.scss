@@ -1,0 +1,67 @@
+@mixin media{
+	@media screen and (max-width: 800px){
+		@content;
+	}
+}
+*{
+	padding: 0;
+	margin: 0;
+	font: 1em Helvetica, Arial;
+}
+.nav{
+	background: #c0392b;
+	width: 100%;
+	padding: 20px 0;
+	text-align: center;
+	
+	a{
+		color: #fff;  
+		text-decoration: none;
+
+		&:hover{
+			color: #ccc;
+		}
+	}
+
+	ul{
+		padding: 0;
+		margin: 0;
+	}
+}
+.items{
+	@include media{
+		display: none;
+	}
+	li{
+		list-style: none;
+		display: inline; 
+		padding-right: 15px;
+		width: 100%;
+		margin: 0 auto; 
+
+		@include media{
+			display: table;
+			padding: 10px 0;
+		}
+	}
+}
+.icon{
+	color: #fff;
+	cursor: pointer;
+	display: none;
+	font-size: 24px;
+
+	@include media{
+		display: block;
+	}
+}
+.showItems{
+	display: block;
+}
+
+.content {
+  padding: 15px 0;
+  width:60%;
+  margin: 0 auto;
+  line-height:22px;
+}

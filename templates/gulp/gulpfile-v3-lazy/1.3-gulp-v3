@@ -1,0 +1,47 @@
+#!/bin/bash
+
+echo "Без использования js"
+let delay=1
+let count=0
+let itogo=5
+echo "-----------"
+echo "Переходим к Gulp"
+echo "npm init"
+sleep $delay
+npm init 
+
+echo "Installing Gulp"
+sleep $delay
+npm install gulpjs/gulp#4.0
+
+
+echo "Установка gulp модулей"
+echo "-----------"
+echo "$((++count)) из $itogo"
+echo "gulp-load-plugins"
+sleep $delay
+npm i -D gulp-load-plugins
+echo "-----------"
+echo "$((++count)) из $itogo"
+echo "del"
+sleep 5
+npm i -D del
+echo "-----------"
+echo "$((++count)) из $itogo"
+echo "browser-sync"
+sleep $delay
+npm i -D browser-sync
+echo "-----------"
+echo "$((++count)) из $itogo"
+echo "imagemin-pngquant"
+sleep $delay
+npm i -D imagemin-pngquant
+echo "-----------"
+echo "$((++count)) из $itogo"
+echo "stream-combiner2"
+sleep $delay
+npm i -D stream-combiner2
+echo "-----------"
+echo "Все gulp модули загружены"
+echo "-----------"
+

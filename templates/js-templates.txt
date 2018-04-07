@@ -1,0 +1,79 @@
+ 
+==== Проверка видимости элемента ===================================
+Это дает нам замечательный способ для проверки, виден ли элемент:
+
+function isHidden(elem) {
+  return !elem.offsetWidth && !elem.offsetHeight;
+}
+===================================================================
+
+==== ширина полосы прокрутки =======================================
+// создадим элемент с прокруткой
+var div = document.createElement('div');
+
+div.style.overflowY = 'scroll';
+div.style.width = '50px';
+div.style.height = '50px';
+
+// при display:none размеры нельзя узнать
+// нужно, чтобы элемент был видим,
+// visibility:hidden - можно, т.к. сохраняет геометрию
+div.style.visibility = 'hidden';
+
+document.body.appendChild(div);
+var scrollWidth = div.offsetWidth - div.clientWidth;
+document.body.removeChild(div);
+
+alert( scrollWidth );
+===================================================================
+
+==== размер страницы с учетом прокрутки ===========================
+Надёжно определить размер страницы с учетом прокрутки можно, взяв максимум из нескольких свойств:
+
+ var scrollHeight = Math.max(
+  document.body.scrollHeight, document.documentElement.scrollHeight,
+  document.body.offsetHeight, document.documentElement.offsetHeight,
+  document.body.clientHeight, document.documentElement.clientHeight
+);
+
+alert( 'Высота с учетом прокрутки: ' + scrollHeight );
+===================================================================
+==== предзагрузка картинок ========================================
+ var thumbs = document.getElementById('thumbs');	// контейнер где расположены картинки
+ var imgs = thumbs.getElementsByTagName('img');
+    for (var i = 0; i < imgs.length; i++) {
+      var url = imgs[i].parentNode.href;
+      var img = document.createElement('img');
+      img.src = url;
+    }
+===================================================================
+====| активный пункт меню |========================================
+ 
+ $('.menu a').each(function() {
+    var location = window.location.href;
+    var link = this.href;
+
+    if( location == link ) {
+      $(this).addClass('current-item');
+    }
+  });
+
+ ===================================================================
+ ==== Переменные для HTML ====
+  <script>
+        var telNumber = "123-456-789";
+  </script>
+ <body>    
+	<p>Телефон: <span class="tel"></span></p>
+ </body>
+  <script>
+        replaceName('tel', telNumber);
+  
+        function replaceName(className, value){
+            var tag = document.getElementsByClassName(className);
+            for (var i = 0; i < tag.length; i++){
+                tag[i].innerHTML = value; 
+            }   
+        }
+  </script>
+ =============================

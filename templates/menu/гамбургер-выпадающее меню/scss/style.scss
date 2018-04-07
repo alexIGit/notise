@@ -1,0 +1,133 @@
+$menu-bgc: #398839;    
+$font-size: 17px;  	/*	only px	*/
+$font-color: #fff;  
+$color-hover: yellow;	// #ddd;     /* and active */ 
+$padding-ul: 10px 18px;
+$box-shadow-menu: 0 1px 1px rgba(0, 0, 0, 0.15);
+$text-shadow-menu: 0 1px 1px rgba(0, 0, 0, 0.5);
+$border-radius-menu: 3px;
+ 
+.toggle-nav{
+	display: none;   
+}
+@media screen and (min-width: 860px) {
+	body{
+ /**/		background: yellow;		
+	}
+	.menu {
+		width: 100%;
+		padding: $padding-ul; 
+		box-shadow: $box-shadow-menu; 
+		border-radius: $border-radius-menu;
+		background: $menu-bgc; 
+	}
+}
+
+.menu {
+
+	ul{
+		display: inline-block; 
+		background: $menu-bgc;   
+	}
+	li{
+		margin: 0 50px 0 0;
+		float: left; 
+		list-style: none;
+		font-size: $font-size;
+
+		&:last-child{
+			margin-right: 0;  
+		}
+	}
+	a{
+		text-shadow: $text-shadow-menu;
+		color: $font-color;
+		transition: color linear 0.15s;
+
+		&:hover{
+			text-decoration: none;
+			color: $color-hover; 
+		}
+	}
+	.current-item {   
+		 
+		text-decoration: none;
+		color: $color-hover; 
+		
+		 
+	}
+} 
+/*---- Responsive ----*/
+
+@media screen and (max-width: 1150px) {
+	body{
+		// /**/background: blue; 
+ 	} 
+	.wrap{
+		width: 90%;
+	}
+}
+@media screen and (max-width: 860px) {
+	body{
+ /**/		background: red;  
+	}  
+	.menu{ 
+		position: relative;
+		display: inline-block;
+		width: 20%;  
+
+		ul.active{
+			display: none;    
+		}
+		ul{
+			width: 100%;
+			position: absolute;
+			top: 120%; 
+			left: 0;
+			padding: $padding-ul;
+			box-shadow: $box-shadow-menu;
+			border-radius: $border-radius-menu; 
+			/*---- добавление стрелки ----*/
+			&:after{
+				width: 0;
+				height: 0;
+				position: absolute;
+				top: 0%;
+				left: 22px;      
+				content: ''; 
+				transform: translate(0%, -100%);
+				border-left: 7px solid transparent; 
+				border-right: 7px solid transparent; 
+				border-bottom: 7px solid $menu-bgc;
+			}
+		} 
+		li{
+			margin: 5px 0;
+			float: none;
+			display: block; 
+		}
+		a {
+			display: block; 
+			text-decoration: none;  
+		}
+	}
+	.toggle-nav {
+		padding: 20px;
+		float: left;
+		display: inline-block;
+		box-shadow: $box-shadow-menu;
+		background: $menu-bgc;
+		text-shadow: $text-shadow-menu;
+		color: $font-color;
+		font-size: $font-size + 3px;
+		transition: color linear 0.15s;
+		&:hover{
+			text-decoration: none;
+			color: $color-hover;
+		}
+		&.active{
+			@extend .toggle-nav:hover; 
+			
+		}
+	}  
+}

@@ -1,0 +1,20 @@
+/*
+**  responsive
+ */
+
+ /* 
+	переделать на $width-tablet
+ */
+ $tablet-width: 768px;  
+ $dectop-width: 1024px;
+
+ @mixin tablet {
+    @media (min-width: #{$tablet-width}) and (max-width: #{$dectop-width - 1px}) {
+          @content;
+    }
+ }
+ @mixin dectop {
+    @media (min-width: #{$dectop-width}) {
+          @content;
+    }
+ }

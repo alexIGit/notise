@@ -1,0 +1,29 @@
+/*
+ * variables
+ */
+/*
+ *
+ */
+.box {
+  display: inline-block; }
+
+.stars {
+  display: flex;
+  flex-flow: row-reverse; }
+
+svg {
+  width: 2em;
+  height: 2em;
+  fill: white;
+  pointer-events: none; }
+
+.star:hover svg {
+  fill: orange; }
+.star:hover ~ .star svg {
+  fill: orange; }
+.star.is-selected svg {
+  fill: #cc8400; }
+.star.is-selected ~ .star svg {
+  fill: #cc8400; }
+
+/*# sourceMappingURL=style.css.map */

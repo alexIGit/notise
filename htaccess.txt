@@ -1,0 +1,8 @@
+ AddDefaultCharset utf-8
+# DirectoryIndex 
+
+# Стилизация
+# IndexOptions FancyIndexing ScanHTMLTitles
+
+# скрывание файлов
+IndexIgnore *.htmls

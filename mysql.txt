@@ -1,0 +1,444 @@
+
+----
+ mysql -u root -p	- запуск
+
+? ~$ sudo /etc/init.d/mysql stop
+
+---- Объекты БД ----
+ TABLE
+ INDEX
+ CONSTRAINT
+ VIEW
+ PROCEDURE
+ FUNCTION
+ TRIGGER
+
+
+--------------------
+ -- DDL -- (Язык Определения Данных) --
+ CREATE <OBJECT>[OPTIONS]
+ ALTER <OBJECT>[OPTIONS]
+ DROP <OBJECT>[OPTIONS]
+
+ -- DML -- (Язык Манипулирования Данными) --
+ SELECT
+ INSERT
+ UPDATE
+ DELETE
+ TRUNCATE
+ COMMIT
+ ROLLBACK
+
+ -- DCL -- (Язык Управления Данными) --
+ GRANT
+ REVOKE
+
+
+---- Основые команды ------------------- 
+ \c		- отмена ввода
+ CREATE 	- Создание базы данных			
+		  CREATE DATABASE publications;
+		  CREATE TABLE classics (
+			author VARCHAR(128),
+			title VARCHAR(128)) ENGINE MyISAM;
+		  CREATE TABLE tablename (fieldname INT UNSIGNED);
+		  CREATE TABLE tablename (fieldname INT(4));
+ 
+ GRANT 		- Изменение привилегий пользователя или создание нового пользователя
+		  GRANT ALL ON publications.* TO 
+			'jim'@'localhost' IDENTIFIED BY 'mypasswd';
+
+ DESCRIBE 	- Описание столбцов таблиц
+		  DESCRIBE classics;
+
+ ALTER 		- Внесение изменений в базу данных или таблицу
+
+ DROP 		- Удаление базы данных или таблицы
+ 		  ALTER TABLE classics DROP id;
+		  DROP TABLE tablename;
+
+ RENAME 	- Переименование таблицы
+		  ALTER TABLE classics RENAME pre1900;
+
+ INSERT 	- Вставка данных
+		  INSERT INTO classics(author, title, type, year)
+			VALUES('Mark Twain','The Adventures of Tom Sawyer','Fiction','1876');
+
+ SHOW 		- Список сведений об объектах
+		  SHOW tables;
+
+ UPDATE 	- Обновление существующей записи
+		  UPDATE classics SET isbn='9781598184891' WHERE year='1876';
+
+ BACKUP 	- Создание резервной копии таблицы
+ 
+ DELETE 	- Удаление строки из таблицы
+		  DELETE FROM classics WHERE title='Little Dorrit';
+
+ ORDER BY	- сортировка
+		  SELECT author,title FROM classics ORDER BY author;
+
+ GROUP BY	- группировка
+		  SELECT category,COUNT(author) FROM classics GROUP BY category;
+
+ EXIT (Ctrl+C) 	- Выход
+ HELP (\h, \?) 	- Отображение подсказки
+ LOCK 		- Блокировка таблицы (таблиц)
+ QUIT (\q) 	- То же самое, что и EXIT
+ SOURCE 	- Выполнение команд из файла
+ STATUS (\s) 	- Отображение текущего состояния
+ TRUNCATE 	- Опустошение таблицы
+ UNLOCK 	- Снятие блокировки таблицы (таблиц)
+
+ USE 		- Использование базы данных
+ SELECT		- выбор
+		  SELECT что-нибудь FROM имя_таблицы;
+		  
+		  
+-----------------------------
+ ALTER TABLE classics 
+ ---	MODIFY year SMALLINT;		- изменение типа данных
+ ---	ADD pages SMALLINT UNSIGNED; 	- добавление нового столбца
+ ---	CHANGE tipe category VARCHAR(16); - переименование столбца
+ --- 	ADD INDEX(author(20)); 		- создание индекса или  CREATE INDEX author ON
+								 classics (author(20));
+ --- 	ADD isbn CHAR(13) PRIMARY KEY;	- Добавление первичного ключа isbn
+ ---	ADD FULLTEXT(author,title);	- Добавление индекса FULLTEXT
+
+ CREATE TABLE classics (		- Создание таблицы classics с индексами
+	author VARCHAR(128),
+    	INDEX(author(20)) ENGINE MyISAM;
+
+ ---- выбор 
+ SELECT 
+ SELECT * 		FROM classics;
+ ------ COUNT(*) 	FROM classics;	- подсчет количества строк
+ ------ DISTINCT author FROM classics;	- исключает повторение
+ ------ * 		FROM classics WHERE author LIKE "%Langhorne%";	- где автор содержит слово как
+ 
+ SELECT name, author, title FROM customers, classics 		- объединение таблиц
+	WHERE customers.isbn = classics.isbn;
+ 
+ NATURAL JOIN							- объединение таблиц
+ SELECT name,author,title FROM customers NATURAL JOIN classics;	
+
+ JOIN...ON							- объединение таблиц по столбцу
+ SELECT name,author,title FROM customers JOIN classics ON customers.isbn=classics.isbn;
+
+ - Использование ключевого слова AS
+ SELECT name,author,title from customers AS cust, classics AS class WHERE cust.isbn=class.isbn;
+
+
+ SELECT author,title FROM classics LIMIT x, y ; - (x - c какого места, y - сколько ) 
+ --------------------------------- LIMIT  y   ; - (показать y строк с начала)
+
+ SELECT author,title FROM classics ORDER BY author;		- сортировка
+ SELECT category,COUNT(author) FROM classics GROUP BY category;	- группировка
+		 
+
+
+ 
+ WHERE...=
+ WHERE...LIKE 
+ MATCH...AGAINST		- найти в MATCH('где'), где встречаются слова AGAINST('что')
+ MATCH...AGAINST...IN BOOLEAN MODE - AGAINST(' +charles{содержит} -species{кроме} ' IN BOOLEAN MODE);
+
+ SELECT author, title FROM classics				
+	WHERE MATCH(author, title) AGAINST( 'old shop' ) ;  
+
+ SELECT author,title FROM classics 
+	WHERE MATCH(author,title)
+    	AGAINST('+charles -species' IN BOOLEAN MODE);
+
+ UPDATE...SET			- UPDATE {где} SET {установить}
+				  UPDATE classics SET category='Classic Fiction'
+					WHERE category='Fiction';
+
+ --- логические операторы ( AND, OR, NOT )
+ SELECT author,title FROM classics 
+ --------	WHERE author LIKE "Charles%" AND author LIKE "%Darwin";
+ -------- 	WHERE author LIKE "%Mark Twain%" OR author LIKE "%Samuel Langhorne Clemens%";
+ -------- 	WHERE author LIKE "Charles%" AND author NOT LIKE "%Darwin";
+------------------------------------------------------------
+
+---- типы данных ----------------------------[202] Робин Никсон
+
+ -- строковый --
+ CHAR(n)		- при хранении дополняются справа пробелами до заданной длины n,
+				  если фактическая длина строки меньше n		
+ VARCHAR(n)		- поле переменной длины – 
+				  вместе с содержательными данными хранится длина строки, 
+				  пробелами не дополняется
+ 1 <= n <= 255
+
+ TINYTEXT(n)
+ TEXT(n) 
+ MEDIUMTEXT(n)
+ LONGTEXT(n) 
+
+ BINARY(n) or BYTE(n) 	
+ VARBINARY(n)
+ 
+ BLOB(n)
+ MEDIUMBLOB(n)		
+ LONGBLOB(n)
+
+ -- целочисленные --
+
+ TINYING		- 1 байт
+ SMALLINT		- 2 байта
+ MEDIUMINT
+ INT or INTEGER	- 4 байта
+ BIGINT			- 8 байт
+
+ -- вещественные числа -- 
+ FLOAT			- 4 байта (DOUBLE)
+
+ DOUBLE or REAL
+ DECIMAL[(M[,D])] – неупакованное число с плавающей точкой (хранится в виде строки)
+
+ -- Дата-время --
+
+ DATETIME	'0000-00-00 00:00:00'
+ TIMESTAMP	'0000-00-00 00:00:00'   1970-2037
+ DATE		'0000-00-00'			
+ TIME		'00:00:00'
+ YEAR		0000	1901-2155
+
+ Тип столбца TIMESTAMP - позволяет автоматически сохранять время изменения/добавления строки
+
+
+ AUTO_INCREMENT 	- +1
+			  ALTER TABLE classics 
+				ADD id INT UNSIGNED NOT NULL 
+				AUTO_INCREMENT KEY;
+
+ -- Простейшие типы данных:
+ INTEGER – целые значения;
+ REAL – вещественные значения;
+ CHAR(N) – строки фиксированной длины (n символов);
+ VARCHAR(N) – строки переменной длины (максимально – n символов);
+ DATE – дата и время.
+
+----------------------------------------------
+
+-- ПравилаТип правила целостности
+ NULL/NOT NULL	- Разрешение/запрет использования неопределенных значений
+				  NULL позволяет не задавать значение атрибута.
+				  NOT NULL проверяет, чтобы значение атрибута задано 
+				  		   (не позволяет хранить неопределенные значения)
+
+ UNIQUE			- Контроль уникальности значений атрибутов
+ PRIMARY KEY	- Первичный ключ
+ FOREIGN KEY	- Внешний (или ссылочный) ключ
+ CHECK			- Контроль допустимых значений атрибутов
+
+ ~~
+ CREATE TABLE Person (PersonId INTEGER, DepartmentId INTEGER NOT NULL, Job VARCHAR(30));
+ ~~
+
+ -- Пример: создание таблицы --
+ CREATE DATABASE temp;
+ USE temp;
+ CREATE TABLE person
+	(PersonId  INTEGER,
+	PersonName VARCHAR(50),
+	BirthDate DATE,
+	BirthPlace VARCHAR(50),
+	Address	VARCHAR(50)
+ );
+
+ -- Пример: модификация структуры таблицы --
+ ALTER TABLE person ADD COLUMN phone INTEGER;
+ ALTER TABLE person MODIFY COLUMN phone VARCHAR(11);
+ DESCRIBE person;
+ ALTER TABLE person DROP COLUMN phone;
+
+ -- Пример: добавление записей в таблицу --
+ INSERT INTO person (PersonId, PersonName, BirthDate, BirthPlace, Address)
+ VALUES(1, 'Андрей Иванов', '1995-01-25', 'Санкт-Петербург', 'Невский пр., д.11');
+ INSERT INTO person
+ VALUES(2, 'Василий Семенов', '1995-02-20', 'Санкт-Петербург', 'Большой пр., д.17');
+
+
+ -- Пример: удаления записей из таблицы --
+ DELETE FROM person WHERE PersonId = 1;
+ TRUNCATE TABLE person;
+
+ -- Пример: редактирование записей в таблице --
+ UPDATE person SET Address = ‘ул. Садовая, дом 4’, BirthPlace = ‘Ярославль’
+ WHERE PersonId = 1;
+ UPDATE person SET PersonId = PersonId * 10;
+
+
+---- Заполнение столбца isbn данными и использование первичного ключа
+  
+ ALTER TABLE classics ADD isbn CHAR(13);
+ UPDATE classics SET isbn='9780582506206' WHERE year='1811';
+ ...
+ ALTER TABLE classics ADD PRIMARY KEY(isbn);
+-------------------------------------------------
+
+---- Создание таблицы classics с первичным ключом
+
+ CREATE TABLE classics (
+	author VARCHAR(128),
+	title VARCHAR(128),
+	category VARCHAR(16),
+	year SMALLINT,
+	isbn CHAR(13),
+	INDEX(author(20)),
+	INDEX(title(20)),
+	INDEX(category(4)),
+	INDEX(year),
+	PRIMARY KEY (isbn)) ENGINE MyISAM;
+-------------------------------------------------------	 
+
+---- Транзакции ----------------
+ BEGIN;		\\ начало транзакции
+ 	UPDATE accounts SET balance=balance+25.11 WHERE number=12345;
+ COMMIT;	\\ передать все изменения базе данных
+
+ --- Отмена транзакции с помощью команды ROLLBACK
+ ROLLBACK;
+
+ --- Использование команды EXPLAIN
+ EXPLAIN SELECT * FROM accounts WHERE number='12345';
+-------------------------------
+
+---- Создание таблицы, готовой к обработке транзакций
+ CREATE TABLE accounts (
+	number INT, balance FLOAT, PRIMARY KEY(number)
+ ) ENGINE InnoDB;
+ DESCRIBE accounts;
+----------------------------------------------------------
+
+---- Резервное копирование и восстановление данных
+ 1. LOCK TABLES имя_таблицы1 READ, имя_таблицы2 READ ...		\\ блокировка таблицы
+ 2. mysqldump -u пользователь -pпароль база_данных			\\ 
+ 3. mysqldump -u пользователь -pпароль publications > publications.sql 	\\ Создание файла резервной копии
+ 4. UNLOCK TABLES;							\\ снятие блокировки
+
+ --- Создание резервной копии отдельной таблицы
+
+ LOCK TABLES publications.classics READ;
+ mysqldump -u пользователь -pпароль publications classics > classics.sql
+ UNLOCK TABLES;
+
+ ---- Создание резервной копии всех таблиц
+
+ mysqldump -u пользователь -pпароль --all-databases > all_databases.sql
+
+ --- Восстановление данных из файла резервной копии
+ mysql -u пользователь -pпароль < all_databases.sql 			- Восстановление полного набора баз данных
+ mysql -u пользователь -pпароль -D publications < publications.sql 	- Восстановление базы данных publications
+ mysql -u пользователь -pпароль -D publications < classics.sql 		- Восстановление таблицы classics в базе данных publications
+
+ --- Выгрузка данных в файлы формата CSV
+
+ mysqldump -u пользователь -pпароль --no-create-info --tab=c:/temp
+ 	--fields-terminated-by=',' publications
+
+
+------------------------------------------------------
+
+---- Черновик
+
+CREATE TABLE tab (
+    Author1 VARCHAR(128),
+    Author2 VARCHAR(128),
+    Title VARCHAR(128),
+    isbn CHAR(13),
+    Price CHAR(5),
+    CustName VARCHAR(128),
+    CustAddress VARCHAR(128),
+    PurchDate CHAR(128),
+    INDEX(Author1(10)),
+    INDEX(Author2(10)),
+    INDEX(Title(20)),
+    INDEX(Price(5)),
+    INDEX(CustName(20)),
+    INDEX(CustAddress(20)),
+    INDEX(PurchDate(10)) ) ENGINE MyISAM;
+
+INSERT INTO tab(Author1, Author2, Title, isbn, Price, CustName, CustAddress, PurchDate)
+	VALUES('David Sklar', 'Adam Trachtenberg', 'PHP Cookbook', '0596101015', '44,99', 'Emma Brown', '1565 			Rainbow Road, Los Angeles, CA 90014', 'Mar 03 2009' );
+INSERT INTO tab(Author1, Title, isbn, Price, CustName, CustAddress, PurchDate)
+	VALUES('Danny Goodman', 'Dynamic HTML',	'0596527403', '59,99',	'Darren Ryder', '4758 Emily Drive, 			Richmond, VA 23219', 'Dec 19 2008' );   
+INSERT INTO tab(Author1, Author2, Title, isbn, Price, CustName, CustAddress, PurchDate)
+	VALUES('Hugh E. Williams', 'David Lane', 'PHP and MySQL', '0596005436', '44,95', 'Earl B.Thurston', '862 			Gregory Lane, Frankfort, KY 40601', 'Jun 22 2009' );
+INSERT INTO tab(Author1, Author2, Title, isbn, Price, CustName, CustAddress, PurchDate)
+	VALUES('David Sklar', 'Adam Trachtenberg', 'PHP Cookbook', '0596101015', '44,99', 'Darren Ryder', '4758 		Emily Drive, Richmond, VA 23219', 'Dec 19 2008' );
+INSERT INTO tab(Author1, Author2, Title, isbn, Price, CustName, CustAddress, PurchDate)
+	VALUES('Rasmus Lerdorf', 'Kevin Tatroe & Peter MacIntyre', 'Programming PHP', '0596006815', 			'39,99', 'David Miller', '3647 Cedar Lane, Waltham, MA 02154', 'Jan 16 2009' ); 
+
+CREATE TABLE Authors (
+	isbn CHAR(13),
+    Author VARCHAR(128),
+    INDEX(Author (10)) ) ENGINE MyISAM;
+INSERT INTO Authors( isbn, Author)
+	VALUES( '0596101015', 'David Sklar');
+INSERT INTO Authors( isbn, Author)    
+  	VALUES( '0596527403', 'Danny Goodman');   
+INSERT INTO Authors( isbn, Author)
+	VALUES( '0596005436', 'Hugh E. Williams');
+INSERT INTO Authors( isbn, Author)
+	VALUES( '0596006815', 'Rasmus Lerdorf');
+INSERT INTO Authors( isbn, Author)
+   	VALUES( '0596101015', 'Adam Trachtenberg');
+INSERT INTO Authors( isbn, Author)
+	VALUES( '0596005436', 'David Lane');
+INSERT INTO Authors( isbn, Author)
+	VALUES( '0596006815', 'Kevin Tatroe');
+INSERT INTO Authors( isbn, Author)
+	VALUES( '0596006815', 'Peter MacIntyre');
+
+CREATE TABLE Customers (
+  	Name VARCHAR(128),
+    Address VARCHAR(128),
+    City VARCHAR(128),
+    State CHAR(2),
+    Zip CHAR(5),
+    INDEX(Name(10)),
+    INDEX(Address(10)),
+    INDEX(City(20)),
+    INDEX(State(2)),
+    INDEX(Zip(5)) ) ENGINE MyISAM;
+ALTER TABLE Customers
+	ADD CustNo INT UNSIGNED NOT NULL AUTO_INCREMENT KEY;
+INSERT INTO Customers( Name, Address, City, State, Zip)
+	VALUES( 'Emma Brown', '1565 Rainbow Road', 'Los Angeles', 'CA', '90014' );
+INSERT INTO Customers( Name, Address, City, State, Zip)
+	VALUES( 'Darren Ryder', '4758 Emily Drive', 'Richmond', 'VA', '23219' );
+INSERT INTO Customers( Name, Address, City, State, Zip)
+	VALUES( 'Earl B.Thurston', '862 Gregory Lane', 'Frankfort', 'KY', '40601' );
+INSERT INTO Customers( Name, Address, City, State, Zip)
+	VALUES( 'David Miller', '3647 Cedar Lane', 'Waltham', 'MA', '02154' );
+    
+ALTER TABLE tab DROP Author1;
+ALTER TABLE tab DROP Author2;           
+
+CREATE TABLE Titles (
+  	isbn CHAR(13),
+    Title VARCHAR(128),
+    Price CHAR(5),
+    INDEX(Title(20)),
+    INDEX(Price(5)) ) ENGINE MyISAM;
+INSERT INTO Titles( isbn, Title, Price)
+	VALUES( '0596101015', 'PHP Cookbook', '44.99');
+INSERT INTO Titles( isbn, Title, Price)
+	VALUES( '00596527403', 'Dynamic HTML', '59.99');
+INSERT INTO Titles( isbn, Title, Price)
+	VALUES( '0596005436', 'PHP and MySQL', '44.95');
+INSERT INTO Titles( isbn, Title, Price)
+	VALUES( '0596006815', 'Programming PHP', '34.99');    
+
+ALTER TABLE tab DROP Title;
+ALTER TABLE tab DROP Price;  
+ALTER TABLE tab DROP CustName;
+ALTER TABLE tab DROP CustAddress;  
+
+SELECT CustNo, isbn, PurchDate FROM Customers, tab;
+
+
+

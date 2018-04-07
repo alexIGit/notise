@@ -1,0 +1,287 @@
+Мэтью Мак Дональд 153
+---- разметка ----------------
+ <header> ... </header>		- шапка
+ -----------------------
+ <aside>			- боковая панель 
+     <nav> ... 	</nav>
+     <section> 	</section>
+     <div> 	</div> 	    - для рекламы
+ </aside>
+-------------------------------------------------
+ <article>			- основное содержание страницы
+     <header> ... </header> - шапка
+     <div> ... </div>	    - содержимое статьи
+ </article>		
+ <footer>  ... </footer>    - подвал
+-----------------------------
+
+---- подзаголовки -----------
+ <header>
+     <hgroup>
+         <h1> ... </h1>
+	 <h2> ... </h2>
+     </hgroup>
+     <p> ... </p>
+ </header>
+---- рисунки ----------------
+ <figure>
+     <img>
+     <figcaption> text </figcaption>
+ </figure>
+------------------------------
+---- условия -----------------
+ <!--[if lt IE 9]>
+	...
+ <![endif]-->
+------------------------------
+
+---- разворачивающие блоки ---
+ <details>
+    <summary> Блок 1</summary>
+    <p>Блок развернут</p>
+ </details> 
+-------------------------------
+---- Все ссылки в новой вкладке ----
+ в head
+	<base target="_blank">
+
+ на якоря ставим target="_self"
+------------------------------------
+---- дата и время -----------------
+ <time> 2012-03-21 </time>	
+ <time datetime="2012-03-21">21-го марта</time>
+ <time datetime="16:30+4:0">16:30</time>
+ <time datetime="2012-03-21T16:30+4:00">21-го марта в 16:30</time>
+
+ pubdate	- когда указываемая дата совпадает с датой публикации
+ <time datetime="2011-03-21" pubdate>21-го марта 2011 г.</time>
+-----------------------------------
+
+---- <output> ---------------------
+ <p>Your BMI: <output id="result"></output></p> 	- использовать для JavaScript-вычисления
+
+ <p>Your EMI: <output id="result" form="bmiCalculator" for="feet inches pounds"></output></p>
+-------------------------------------
+---- Юникод --- Unicode ---
+ &#code;
+ ножницы: ✂ &#x2702;
+ дробь:   1⁄2 &#xBD;  3⁄4 &#xBE; 
+	  &copy; 
+---------------------------
+----
+ <mark>text</mark> 	- Выделение текста цветом
+
+---- микроформаты ----------------------- [112] Мэтью Мак Дональд
+ hCard
+ hCalendar
+ --- микроданные // itemscope  itemprop
+
+ <div  itemscope    itenrtype="http://data-vocabulary.org/Person">
+
+	<img	itemprop=	"photo" 	src="face.jpg" alt="Mike's Face">
+	<p>This website is the work of
+	<span	itemprop=	"title" 	style="display:none">Web Developer</span>
+	<b   	itemprop=	"name"		>Mike Rowe Formatte</b>.
+	<b  	itemprop=	"nickname">	The Big M.</p>
+	<p>You can contact him where he works, at
+	<span	itemprop=	"affillation"	>The Magic Semantic Company</span> (phone
+	<span 	itemprop=	"tel"		>641-545-0234</span> and ask for Mike).</p>
+	<p>Or, visit him there at:<br>
+	<span 	itemprop=	"address" 	itemscope itemtype="http://data-vocabulary.org/Address">
+	<span 	itemprop=	"street-address">42 Jordan Gordon Street,
+	6th Floor</span><br>
+	<span 	itemprop=	"locality"	>San Francisco</span>,
+	<span 	itemprop=	"region"	>CA</span>
+	<span 	itemprop=	"postal-code"	>94105</span><br>
+	<span 	itemprop=	"country-name"	>USA</span><br>
+	</span>
+	<a 	itemprop=	"url" 	href="http://www.magicsemantics.com">	www.magicsemantics.com</a>
+ </div>
+
+ -- JS 
+	if (!!document.getItems) { // Микроданные поддерживаются }
+	else 			{ // Микроданные не поддерживаются }
+-----------------------
+
+==== Формы ====================================================================================
+ <form>
+    <fieldset>
+	<legend>Contact Details</legend>
+
+ I. -|	<label for="name">Name <em>*</em></label>	  for ссылается на id
+     |  <input id="name" type="text">
+ 
+ II.-| <label>Name <em>*</em> <input type="text"></label> можно и так 
+     	
+        <br>
+    </fieldset> 
+ </form>
+
+ type="text"	type="password"		type="checkbox"	
+ type="radio" 	type="email"		type="url"
+ type="search" 	type="tel"		type="number"
+ type="range" 	type="color"		type="color"
+
+ type="datetime" "datetime-local" "date" "month" "week" "time"
+
+ Кнопка:
+ type="submit"	type="image"	type="reset"	type="button"
+
+ <textarea>...</textarea>
+
+ <select id="gender">
+     <option value="female">Female</option>
+     <option value="male">Male</option>
+ </select>
+
+ placeholder="Jane Smith"	- Подстановочный текст для поля
+ title=""			- всплывающая подсказка
+ autofocus 			- в элемент <input> или <textarea> (но только в один элемент формы)
+ required			- обязательное поле для заполнения
+ novalidate			- <form> - отключение проверки
+ formnovalidate			- <input> -отключение проверки
+ pattern="[A-Z]{3}-[0-9]{3}"	- проверка на регулярные выражения
+ spellcheck='true'		- проверка орфографии
+ autocomplete='off'		- запрет автозаполнения
+ autocorrect			| - для управления возможностями автоматического исправления и 
+ autocapitalize			|   капитализации на некоторых мобильных браузерах Safari для iPad и iPhone.
+ multiple			- для select, file, emaile
+ min//max	
+ step
+ value
+
+ --- подсказки ввода <datalist>
+ <legend>What's Your Favorite Animal?</legend>
+ <input id="favoriteAnimal" list="animalChoices">
+ <datalist id="animalChoices">
+	<option label="Alpaca" value="alpaca">
+	<option label="Zebra" value="zebra">
+ </datalist>
+
+ ==============================================================================================
+ ==== tabindex
+ Разрешаем фокус на любом элементе: tabindex
+ Его основной смысл – это указать номер элемента при переборе клавишей Tab.
+
+ То есть, если есть два элемента, первый имеет tabindex="1", а второй tabindex="2", 
+ то нажатие Tab при фокусе на первом элементе – переведёт его на второй.
+
+ Исключением являются специальные значения:
+ 	tabindex="0" делает элемент всегда последним.
+	tabindex="-1" означает, что клавиша Tab будет элемент игнорировать.
+
+ <ul>
+  <li tabindex="1">Один</li>
+  <li tabindex="0">Ноль</li>
+  <li tabindex="2">Два</li>
+  <li tabindex="-1">Минус один</li>
+</ul>
+ ==============================================================================================
+---- 
+ 
+ <progress value="0.5">25%</progress>
+ <meter min="5" max="70" value="28">28 pounds</meter>
+
+
+ contentEditable	- редактирование html кода в браузере
+ designMode
+------------------
+---- Аудио -----------
+ <audio controls>
+     <source src='audio.m4a' type='audio/aac'>
+     <source src='audio.mp3' type='audio/mp3'>
+     <source src='audio.ogg' type='audio/ogg'>
+ </audio>
+	autoplay  — заставляет аудио запускаться на проигрывание сразу по готовности;
+	controls  — заставляет вывести панель управления;
+	loop  — устанавливает аудио на бесконечное проигрывание;
+	preload  — заставляет аудио приступить к загрузке даже до того, как пользователь выберет команду Play
+	src  — указывает исходное местоположение аудиофайла;
+	type  — указывает кодек, используемый для создания аудио.
+
+ <button onclick='playaudio()'>Play Audio</button>		// функции описаны в JS-файле
+ <button onclick='pauseaudio()'>Pause Audio</button>
+
+ ----Предоставление Flash в качестве резервного варианта для браузеров, не поддерживающих HTML5 -------
+ 
+ <audio controls>
+	<object type="application/x-shockwave-flash" data="audioplayer.swf" width="300" height="30">
+		<param name="FlashVars"	value="mp3=audio.mp3&showstop=1&showvolume=1">
+	</object>
+	<source src='audio.m4a' type='audio/aac'>
+	<source src='audio.mp3' type='audio/mp3'>
+	<source src='audio.ogg' type='audio/ogg'>
+ </audio>
+
+ 	mp3  — URL-адрес аудиофайла MP3;
+	showstop  — 1 - выводится кнопка остановки, в противном случае она не показывается;
+	showvolume  — 1 - выводится панель громкости, в противном случае она не показывается.
+----------------------
+
+---- Видео -----------
+ <video width='560' height='320' controls>
+     <source src='movie.mp4' type='video/mp4'>
+     <source src='movie.webm' type='video/webm'>
+     <source src='movie.ogv' type='video/ogg'>
+ </video>
+	autoplay  — заставляет видео запускаться на проигрывание сразу по готовности;
+	controls  — заставляет вывести панель управления;
+	loop  — устанавливает видео на бесконечное проигрывание;
+	muted  — выключает звуковое сопровождение;
+	poster  — позволяет выбрать изображение, показываемое при проигрывании видео;
+	preload  — заставляет видео приступить к загрузке даже до того, как пользователь выберет команду Play
+	src  — указывает исходное местоположение видеофайла;
+	type  — указывает кодек, используемый для создания видео;
+
+  <button onclick='playvideo()'>Play Video</button>		// функции описаны в JS-файле
+  <button onclick='pausevideo()'>Pause Video</button>
+
+ ----Предоставление Flash в качестве резервного варианта для браузеров, не поддерживающих HTML5 -------
+ 
+ <video width='560' height='320' controls>
+	<object width='560' height='320' type='application/x-shockwave-flash' data='flowplayer.swf'>
+		<param name='movie' value='flowplayer.swf'>
+		<param name='flashvars' value='config={"clip": { "url": "http://tinyurl.com/html5video-mp4", "autoPlay":false, "autoBuffering":true}}'>
+	</object>
+	
+	<source src='movie.mp4' type='video/mp4'>
+	<source src='movie.webm' type='video/webm'>
+	<source src='movie.ogv' type='video/ogg'>
+ </video>
+
+ 	url  — URL-адрес веб-сервера с проигрываемым файлом .mp4 ;
+	autoPlay  — true - проигрывание начинается автоматически, в противном случае ожидается нажатие кнопки проигрывания;
+ 	autoBuffering  — true -то, чтобы впоследствии свести к минимуму буферизацию при медленных подключениях, перед началом про игрывания видео будет предварительно загружено соответственно доступной
+пропускной способности.
+----------------------
+
+---- Геолокация ---------
+ <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+
+---------------------
+
+---- Локальное хранилище ----------
+
+
+-----------------------------------
+
+==== Адаптив ==========================================================================================
+<meta name="viewport" content="width=device-width">
+<meta name="viewport" content="initial-scale=2.0,width=device-width" />
+<meta name="viewport" content="width=device-width, maximum-scale=3,minimum-scale=0.5" />
+
+
+
+---- Медиа запросы
+ <link href="css/small.css" rel="stylesheet" media="(max-width:480px)"> 	- для мобил
+ <link href="css/large.css" rel="stylesheet" media="(min-width:769px)">		- для компов
+ <link href="css/medium.css" rel="stylesheet" media="(min-width:481px)		-| для планшетов
+	and (max-width:768px)">							 |
+
+
+
+=======================================================================================================
+
+
+

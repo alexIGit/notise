@@ -1,0 +1,253 @@
+ ==== Основные команды NPM
+ npm init -> package.json
+ npm addu					( adduser )
+ npm pu						( publish )
+ npm s ключевые слова		( search )
+ npm i модуль				( install )
+ npm i express@3.0			- установка определенной версии
+ npm up модуль				( update )
+ npm r модуль				( remove )
+ npm help команда
+
+ npm -g up express		- если модуль ставился глобально
+						  нужно использовать флаг -g
+
+
+========================================
+==== console ===========================
+node server.js
+npm i express						- установка модуля express
+sudo npm -g i express		-    глобально
+
+========================================
+==== команды ===========================
+ ---- Модули ---------------------------
+ Виды: JS, NODE, JSON
+
+ ---- ---- Область видимости
+	 Переменные в модуле видимы лишь в модуле 
+	 поэтому их надо експортировать
+
+ 	---- в модуле
+ 	exports.User = User;
+
+	---- куда экспортируются
+	var user = require('./user');	// если из папки user, 
+																// то модуль называется index.js
+ 	var vasya = new user.User("Вася");
+
+    ---- ---- глобальные переменные
+
+ 	---- в модуле
+	global.User = User;
+
+	---- куда экспортируются
+	require('./user');
+	var vasya = new User("Вася");
+ ---------------------------------------
+ ---- ---- кэширование ----
+ поиск модулей: https:	// nodejs.org/api/modules.html#modules_all_together
+ require('user');   		//  NODE_PATH=. node server.js
+ --------------------------
+ ---- json ----
+ var ph = require('./ru');  из ru.json
+ сначала ищется ru.js потом ru.json 
+ --------------
+
+ ---- module.parent
+ ---- module.exports = exports = this
+ если
+	module.exports = User;
+ то
+	var User = require(./user);
+	var petja = new User("Петя");
+	
+ ---- модуль-фабрика: передаём параметры
+
+
+ ---- Модули node.js -------------------
+ ---- until				
+ until.inspect(obj)	- позволяет вывести красиво любой объект
+
+ until.format("My %s %d %j", 123, {test:"obj"});
+	// => My string 123 {"test":"obj"}
+ %s	- строка
+ %d	- число
+ %j	- json
+
+ until.inherits(Rabbit, Animal);	- наследование 
+					  Animal - предок,
+					  Rabbit - дитя	
+ ---- console		( явл. Глобальной переменной и поэтому его не надо require() )
+ console.log()		-| выводит в стандартный поток вывода
+ 	.info()		 			 | (out)
+
+ console.error()	-| выводит в поток ошибок
+	.warn()					 | (err)
+ 
+ ~> node con.js 1>ok 2>err 	- перенаправлять ошибки в друггой поток
+
+ console.trace()	- выводит стек trace в поток ошибок
+			  используется редко
+
+ ---------------------------------------
+ ---- Наследование от ошибок Error ---- 
+ // message, name, stack
+	this.message = message;
+	Error.captureStackTrace(this, PhraseError);
+ util.inherits(PhraseError, Error);
+ PhraseError.prototype.name = 'PhraseError';
+
+
+ ---------------------------------------
+
+
+ ---- EventEmitter ---------------------
+ var EventEmitter = require('events').EventEmitter;
+ ---------------------------------------
+
+ ---- supervisor -----------------------
+	- чтобы не перезагрузать сервер при изменениях
+
+ sudo nmp i -g supervisor
+ -> supervisor server
+ изменить настройки webstorm /usr/local/bin/supervisor
+ ---------------------------------------
+ ---- отлатка --------------------------
+ node debug server
+ ---------------------------------------
+ --------------------------------------- 
+==== веб-сервер ====
+ var http = require('http');
+ var fs = require('fs');			fs -> File System 
+
+ http.createServer(callback).listen(8124);
+
+ ---- callback
+ function(req, res) {					// req -> request, res -> response 
+
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello World\n');
+
+  var name = require('url').parse(req.url, true).query.name;
+  // require('url') -  предоставить инструменты для работы с URL-адресами
+ 
+   fs.stat(file, function(err, stat) {  // fs.stat() не только проверяет, что файл существует,
+				       													// но также возвращает объект с информацией о файле,
+				       													// включающей его размер.
+     if (err) {
+       console.error(err);
+       res.writeHead(200, {'Content-Type': 'text/plain'});
+       res.end('Извините картинка не загрузилась');
+     } else {
+       var img = fs.readFileSync(file);
+       res.contentType = 'image/png';
+       res.contentLength = stat.size;
+       res.end(img, 'binary');
+     }
+   
+ }
+ ---- 
+ 
+
+=====================
+==== веб-сервер (кантор) ====
+var http = require('http');
+
+var server = new http.Server();
+// http.Server -> net.Server -> EventEmitter
+
+server.listen(1337, '127.0.0.1');
+
+var counter = 0;
+
+var emit = server.emit;
+server.emit = function(event) {
+    console.log(event);
+    emit.apply(server, arguments);
+}
+server.on('request', function (req, res) {
+    res.writeHead(200, {'Content-Type': 'text/html; charset=UTF-8'});
+    res.end("Привет, мир!" + ++counter);
+});
+
+---- req.methods ----
+req.headers
+req.method
+req.url
+
+---------------------
+---- res.methods ----
+res.writeHead()
+	// res.writeHead(200, {'Content-Type': 'text/html; charset=UTF-8'});
+    // res.writeHead(200, "Ok", {'Cache-control': 'no-cache'});
+res.statusCode 
+	// res.statusCode = 404
+res.setHeader();
+	// res.setHeader('Cache-control', 'no-cache');
+res.removeHeader()
+res.end()
+	// res.end("Страница не найдена");
+           
+---------------------
+====================
+---- debug ---
+var debug = require('debug')('server');
+var debug = require('debug')('server:request');
+
+вместо console.log() -> debug() -> debug("Сервер запущен");
+
+DEBUG=server,server:* node server.js
+----------------
+
+---- winston ----
+var log = require('winston');
+
+log.info()
+log.debug()
+log.error()
+
+|| или
+var log = require('./log')(module);
+ ./log -> настраиваем логгирование 
+-----------------
+
+---- NODE_DEBUG ----
+
+NODE_DEBUG="http net" node server.js
+--------------------
+
+---- //  #20 асинхронная разработка
+// http.createServer(function (req, res) {
+//     var info;
+//
+//     if (req.url == '/') {
+//         fs.readFile('index.html', function (err, info) {
+//             if (err) {
+//                 console.error(err);
+//                 res.statusCode = 500;
+//                 res.end("На сервере произошла ощибка");
+//                 return;
+//             }
+//
+//             res.end(info);
+//         });
+//     } else {
+//         /* 404 */
+//     }
+//
+// });
+-----
+==== плагины: ====
+sudo i -g
+		nodemon
+
+==================
+
+==================
+==== Express =====
+
+npm i -g express
+
+==================
+

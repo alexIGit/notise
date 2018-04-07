@@ -1,0 +1,607 @@
+sass --watch styles.sass:styles.css
+
+sass styles.sass styles.css
+
+sass --watch scss:css				- из папки scss все файлы .scss -> в папку css файлы .css
+
+--- Установка --------
+ 1. установка ruby
+	sudo apt-get install ruby-full rubygems
+ 2. установка SASS
+	sudo gem install sass
+
+----------------------------
+--- Возможные решения ошибок ----
+
+ sudo fuser -vki /var/lib/dpkg/lock 
+ sudo dpkg --configure -a
+-----------------------
+
+---- Организация файлов фрагментов ----
+
+sass/
+|
+|-- utils/		# специальные Sass-файлы
+|	|-- _variables.scss
+|	|-- _functions.scss
+|	|-- _mixins.scss
+|	|-- _helpers.scss	# Помощники классов & placeholder’ов
+|
+|-- base/		# базовые файлы для проекта
+|	|-- _reset.scss
+|	|-- _typography.scss
+|	
+|-- components/		# файлы для компонентов интерфейса
+|	|-- _buttons.scss
+|	|-- _dropdown.scss
+|	|-- _carousel.scss
+|	|-- _cover.scss
+|	...
+|
+|-- layout/		# файлы форматирования элементов страницы
+|	|-- _navigation.scss
+|	|-- _grid.scss
+|	|-- _header.scss
+|	|-- _footer.scss
+|	|-- _sidebar.scss
+|	|-- _forms.scss
+|	...
+|-- pages/		# Особые стили для страниц
+|	|-- _home.scss
+|	|-- _contact.scss
+|	...
+|
+|-- themes/		#? ещё не приходилоь исп-ть
+|	|-- _theme.scss
+|	|-- _admim.scss
+|
+|-- vendors/		# подключение библиотек
+|	...
+|
+'- main.scss		# основной Sass-файл
+	@import	'helpers/variables';
+
+---------------------------------------
+
+ $text-color: #333333;			- переменные
+
+
+ ---- ссылка на родительский селектор --
+
+ a {
+	color: blue;
+	&:hover {
+		color: gren; }
+ }	
+ ---- ---- 
+ <div class="main">
+	<h1 class="main-title">Заголовок</h1>
+	<div class="main-content"> 	</div>
+ </div>
+ ~~~~
+ .main {
+	&-title {
+	}
+	&-content{
+	}
+ }
+ ---------------------------------------
+
+ ---- Наследование свойств -- @extend ---
+ h1 {
+	font-family: "Raleway", Helvetica, Arial, sans-serif;
+	color: #222;
+ }
+ h2 {
+	@extend h1;
+ }
+ ---------------------------------------
+ ---- Селектор-заполнитель -- % --------
+ #main h1 {
+	background-color: blue;
+ }
+ %headline {
+	font-family: "Raleway", Helvetica, Arial, sans-serif;
+	color: #222;
+ }
+ h1 {
+	@extend %headline;
+	border-top: 1px solid #444;
+ }
+ ---------------------------------------
+ ---- селектор расширитель-- % -----
+ #context a%extreme {
+   color: blue;	font-weight: bold; font-size: 2em;
+ }
+ .notice {
+  @extend %extreme;
+ }
+
+ компилируется в
+
+ #context a.notice {
+  color: blue; 	font-weight: bold; font-size: 2em; }
+ ---------------------------------------
+ ---- @at-root ------------------------- не нашел применение к этой директиве
+ .parent {
+  ...
+  @at-root .child { ... }
+ }
+ ===>
+ .parent { ... }
+ .child { ... }
+ ---------------------------------------
+ ---- @debug -- отладка ----------------
+ @debug 10em + 12em; ==> Line 1 DEBUG: 22em
+ ---------------------------------------
+ ---- @warm -- @error -----------------
+ @warm  - не останавливает
+ @error - останавливает компилятор
+ https://sass-scss.ru/documentation/pravila_i_direktivi/direktiva_warn.html
+ https://sass-scss.ru/documentation/pravila_i_direktivi/direktiva_error.html
+ ---------------------------------------
+ ==== Примеси -- @mixin ================
+ @mixin flex {
+	display: -webkit-flex;
+	display: flex;
+ }
+ .container {
+	@include flex;
+	background-color: #84F;
+	border: 1px solid #444;
+ }
+ ---- ---- Добавление переменных в текст-
+ 
+ @mixin rotate($deg) {
+	-webkit-transform: rotate(#{$deg}deg);
+	-ms-transform: rotate(#{$deg}deg);
+	transform: rotate(#{$deg}deg);
+ }
+ 
+ h1 {
+	@include rotate(3);
+ }
+
+ ---- ---- Передача дополнительных данных
+ @mixin text($size, $line-height: 1.2, $weight: normal, $color: null) {
+	font-size: $size;
+	line-height: $line-height;
+	font-weight: $weight;
+	color: $color;
+ }
+
+ h1 {
+	@include text(2em);
+ }
+ h2 {
+	@include text(2em, $color:red);
+ }
+
+ ---- @content -------------------------
+ @mixin apply-to-ie6-only {
+  * html { @content;  }
+ }
+ @include apply-to-ie6-only {
+  #logo { background-image: url(/logo.gif); } 
+ }
+ =======================>
+ * html #logo { background-image: url(/logo.gif); } 
+ ---------------------------------------
+ =======================================
+
+==== @media ===================
+ I.----------------------------
+ $media: screen; $feature: -webkit-min-device-pixel-ratio; $value: 1.5;
+
+ @media #{$media} and ($feature: $value) { 
+   .sidebar {
+     width: 500px;	}		 }
+
+ II.---------------------------
+ .sidebar {
+    width: 300px;
+  	@media screen and (orientation: landscape) {
+    		width: 500px;			   }
+ }
+
+III.-----------------------------
+ $tablet: "(min-width: 768px) and (max-width: 1023px)";
+ $desktop: "(min-width: 1024px)";
+
+ p {
+  font-size: 16px;
+	@media #{$tablet} { font-size: 18px; }
+	@media #{$desktop} {font-size: 20px; }
+ }
+IV.----best-----------------------
+   ---- миксин			/* переделанный лежит в папке
+   $tablet-width: 768px;
+   $desktop-width: 1024px;
+
+   @mixin tablet {
+	@media (min-width: #{$tablet-width}) and (max-width: #{$desktop-width - 1px}) {
+    		@content;
+  	}
+   }
+
+   @mixin desktop {
+  	@media (min-width: #{$desktop-width}) {
+    		@content;
+   	}
+   }
+   ---- использование
+ p {
+  font-size: 16px;
+	@include tablet { font-size: 18px;  }
+	@include desktop {font-size: 20px;  }
+ }
+ V.----------- похож на IV ----
+   ---- переменные 
+   $breakpoints: (	xs: 32rem,	sm: 48rem,	md: 72rem,
+  			lg: 96rem,	xl: 102rem,	xx: 120rem	);
+   ---- миксин
+   @mixin break($size) {  
+  	@media (min-width: map-get($breakpoints, $size)) {
+    		@content;
+  	}
+   }
+   ---- использование
+   .el {
+	display: none;
+	@include break(sm) { display: block; }
+   }
+
+===============================
+
+ ---- Списки ------------------------ [6]
+ nth 		получить доступ к элементам в списке
+	nth(10px 20px 30px, 1) 			=> 10px
+	nth((Helvetica, Arial, sans-serif), 3) 	=> sans-serif
+	nth((width: 10px, length: 20px), 2) 	=> length, 20px
+
+ join 		объединить несколько списков вместе
+	join(10px 20px, 30px 40px) 	=> 10px 20px 30px 40px
+	join((blue, red), (#abc, #def)) => blue, red, #abc, #def
+
+ append 	добавлять элементы в список
+	append(10px 20px, 30px) 	=> 10px 20px 30px
+	append((blue, red), green) 	=> blue, red, green
+	append(10px 20px, 30px 40px) 	=> 10px 20px (30px 40px)
+ ---------------------------------------
+
+ ---- map ------------------------------
+ $map: (key1: value1, key2: value2, key3: value3);
+
+ map-get 	смотрит значение в мапе
+ map-merge 	объединяет две мапы в одну новую
+	
+	---- SCSS:
+ $status-colors: ( primary: #000, success: #27BA6C );
+
+ .message { 
+  	@each $status, $color in $status-colors {
+		&--#{$status} {
+			background: $color;
+    		}
+  	}
+ }
+	---- компилируется в
+ .message--primary { background: #000;    }
+ .message--success { background: #27ba6c; }
+
+ ---------------------------------------
+ ---- Операции с цветами ---------------
+ opacity(color, 0.5)		- число добавляется к альфа каналу
+ transparentize(color, 0.25)	-  	вычитается
+ ---------------------------------------
+ ==== @if ==============================
+
+ @if $type == ocean { color: blue; } 
+ @else if $type == matador { color: red; }
+
+ =======================================
+ ===== @for ============================
+ I. @for $var from <начало> through <конец> - значения <начало> и <конец>
+II. @for $var from <начало>   to    <конец> - не включает значение <конец>
+
+ @for $i from 1 through 3 {
+  	.item-#{$i} { width: 2em * $i; }
+ } ======>
+ .item-1 { width: 2em; }
+ .item-2 { width: 4em; }
+ .item-3 { width: 6em; }
+ =======================================
+ ===== @each ===========================
+ @each $var in <список или карта значений>
+
+ I. @each $animal in puma, sea-slug, egret, salamander {
+  	.#{$animal}-icon {
+    		background-image: url('/images/#{$animal}.png');
+  	}
+    } =======>
+    .puma-icon 	  { background-image: url('/images/puma.png'); }
+    .sea-slug-icon   { background-image: url('/images/sea-slug.png'); }
+    .egret-icon 	  { background-image: url('/images/egret.png'); }
+    .salamander-icon { background-image: url('/images/salamander.png'); }
+
+II. @each $animal, $color, $cursor in (puma, black, default),
+                                      (sea-slug, blue, pointer),
+                                      (egret, white, move) 	{
+  	.#{$animal}-icon {
+    		background-image: url('/images/#{$animal}.png');
+    		border: 2px solid $color;
+    		cursor: $cursor;
+  	}
+    } ========>
+    .puma-icon     { background-image: url('/images/puma.png'); 
+		     border: 2px solid black;	cursor: default; }
+    .sea-slug-icon { background-image: url('/images/sea-slug.png');
+		     border: 2px solid blue; 	cursor: pointer; }
+    .egret-icon    { background-image: url('/images/egret.png');
+		     border: 2px solid white;   cursor: move; }
+
+III. как map
+     @each $header, $size in (h1: 2em, h2: 1.5em, h3: 1.2em) {
+  	#{$header} {
+    		font-size: $size; }
+     } =======>
+     h1 { font-size: 2em;   }
+     h2 { font-size: 1.5em; }
+     h3 { font-size: 1.2em; }
+ =======================================
+ ==== @while ===========================
+ $i: 6;
+ @while $i > 0 {
+  		.item-#{$i} { width: 2em * $i; }
+  		$i: $i - 2;
+ } =======>
+ .item-6 { width: 12em; }
+ .item-4 { width: 8em;  }
+ .item-2 { width: 4em;  }
+ =======================================
+ ==== @function ========================
+ $grid-width: 40px; 	$gutter-width: 10px;
+ 
+ @function grid-width($n) { 
+	@return $n * $grid-width + ($n - 1) * $gutter-width;
+ }
+ #sidebar { width: grid-width(5); } ==========>
+ #sidebar { width: 240px; }
+ =======================================
+ ==== Стили выходного файла ============
+
+ =======================================
+ ---- Примеси --------------------------
+ ---------------------------------------
+ ---- Примеси --------------------------
+ ---------------------------------------
+ ---- Примеси --------------------------
+ ---------------------------------------
+ ---- Примеси --------------------------
+ ---------------------------------------
+
+---- Цвета ----
+/* корпоративные цвета */
+	$primary-dark: 		#06888A;
+	$primary-light: 	#FFEED5;
+	$primary-mid: 		#DC664A;
+	$secondary-dark: 	#5A3928;
+	$secondary-light:	#FDC149;
+/* функциональные переменные */
+	$page-background: 	$primary-light;
+	$headline-color: 	$primary-dark;
+	$text-color: 		$primary-dark;
+	$border-light: 		$secondary-light;
+	$border-dark: 		$primary-dark;
+---------------
+
+==== Пример верстки кнопки ==== [3]
+ 1.-- Variables
+ ---- ---- I. 
+	$button-padding: 0.5rem 1rem;
+	$font-size: 12px;             // 1 factor below base 16px in modular type scale
+	$button-bgcolor: #d9534f;     // the primary brand color
+	$button-border-width: 1px;    // border width for all form inputs
+	$button-color-hover: #fcfcfc; // the light/white brand color
+
+ ---- ---- II. переменные связанные со главными свойствами темы
+	$button-padding: 0.5rem 1rem;
+	$font-size: type-scale(-1);                // utility function
+	$button-bgcolor: $color-primary;           // from 'base/_colors.scss'
+	$button-border-width: $input-border-width; // from 'component/_input.scss'
+	$button-color-hover: $color-light;         // from 'base/_colors.scss'
+
+ 2.-- Миксины		// исп-е: @include
+ 	@mixin scotch-button-theme($color, $color-text-hover: $color-light) {
+ 	   color: $color;
+ 	   border-color: $color;
+ 	   background-color: transparent;
+	
+	    &:hover {
+	        color: $color-text-hover;
+	        background-color: $color;
+	    }
+	}
+
+ 3. Структура		// исп-е: @extend
+	%button {
+	    display: inline-block;
+	    padding: $button-padding;
+	    font-size: $button-font-size;
+	    font-weight: bold;
+	    text-transform: uppercase;
+	    border-width: $button-border-width;
+	    border-style: solid;
+	}
+ 
+ 4. Создание класса
+	.scotch-button {
+	    @extend %button;
+	    @include scotch-button-theme($color-primary);
+	
+	    &.secondary {
+	        @include scotch-button-theme($color-secondary);
+	    }
+	}
+=============================== 
+==== Цвет -- color  =========== [4]
+ ---- variables
+ ---- ----
+		$scotch-colors: (
+		  'primary': #8e3329,
+		  'accent': #d98328,
+		  'secondary': #5a1321,
+		  'foreground': #191919,
+		  'background': #e9e9e9
+		);
+ ---- ---- function
+		@function scotch-color($key: 'primary') {
+		  @return map-get($scotch-colors, $key);
+		}
+ 	
+	$button-color: scotch-color('primary'); // #8e3329
+
+ ---- отттенки и тени
+
+	$color-primary: scotch-color('primary'); // #8e3329
+
+	$color-primary-tinted: mix(white, $color-primary, 10%); // #99473e
+	$color-primary-shaded: mix(black, $color-primary, 10%); // #7f2d24
+
+ ==== Еще вариант color =======
+ ---- variables
+ $status-colors: (
+	primary: #000, 		success: #27BA6C, info: #03a9f4, 
+	warning: #FF8833, 	danger: #ff1a1a
+ );
+ ---- применение 
+ .message {
+	@each $status, $color in $status-colors {
+		&--#{$status} {
+			background: $color;
+    		}
+  	}
+ }
+=============================== 
+==== Типографика ============== [5]
+ ---- Маштабирование
+ ---- ---- 
+		$type-scale: (
+		  -1: 0.75rem,  // small text
+		  0: 1rem,      // body text
+		  1: 1.333rem,  // large text
+		  2: 1.777rem   // main heading
+		);
+ ---- ---- функция
+		@function type-scale($level) {
+		  @return map-get($type-scale, $level);
+		}
+ ==== Отзывчивый шрифт 
+ ---- I:
+ /* описываем точки останова, и размеры шрифтов в [variables]  /*
+
+ $breakpoints: ( small : 480px, medium: 700px, large : 1024px );
+
+ $p-font-sizes: ( null : 15px, small: 16px, medium: 17px, large: 19px );
+
+ $h1-font-sizes: ( null: 28px, small: 31px, medium: 33px, large: 36px );
+
+ /* создаем миксин */
+ 
+  @mixin font-size($fs-map, $fs-breakpoints: $breakpoints) {
+      @each $fs-breakpoint, $fs-font-size in $fs-map {
+        @if $fs-breakpoint == null { font-size: $fs-font-size; }
+    	@else { 
+      		// If $fs-font-size is a key that exists in
+      		// $fs-breakpoints, use the value
+      		@if map-has-key($fs-breakpoints, $fs-breakpoint) {
+        		$fs-breakpoint: map-get($fs-breakpoints, $fs-breakpoint);
+      		}
+      		@media screen and (min-width: $fs-breakpoint) {
+        		font-size: $fs-font-size;
+      		}
+    	}
+      }
+  }  
+
+ /* использование */
+
+ p { @include font-size($p-font-sizes); }
+
+ ---- II: best
+ /* можно также управлять line-height, а также добавить другие св-ва */
+ /* вся суть заключается: создание списков в качестве значений */
+
+ $breakpoints: ( small : 480px, medium: 700px, large : 1024px );
+
+ $p-font-sizes: ( null  : (15px, 1.3), 	small : 16px,
+		  medium: (17px, 1.4),	900px : 18px,
+		  large : (19px, 1.45), 1440px: 20px,
+		 );
+
+ /*  рекомендуется использовать значения без указания единиц измерения, 
+     они являются предпочтительными во избежание неожиданностей при наследовании. */
+
+ /* миксин */ 
+ /* во втором миксине проверяем, если это список, то добавляем line-height */
+ /* также можно добавить третью функцию для др. св-в */
+
+/*    responsive font
+*/ @mixin font-size($fs-map, $fs-breakpoints: $breakpoints) {
+        @each $fs-breakpoint, $fs-font-size in $fs-map {
+            @if $fs-breakpoint == null {
+                @include make-font-size($fs-font-size);
+            }
+            @else {
+                // If $fs-font-size is a key that exists in
+                // $fs-breakpoints, use the value
+                @if map-has-key($fs-breakpoints, $fs-breakpoint) {
+                    $fs-breakpoint: map-get($fs-breakpoints, $fs-breakpoint);
+                }
+                @media screen and (min-width: $fs-breakpoint) {
+                    @include make-font-size($fs-font-size);
+                }
+            }
+        }
+    }
+    // Если в значении имеется список, то добавляем line-height
+  @mixin make-font-size($fs-font-size) {
+    // If $fs-font-size is a list, include
+    // both font-size and line-height
+    @if type-of($fs-font-size) == "list" {
+      font-size: nth($fs-font-size, 1);
+      @if (length($fs-font-size) > 1) {
+        line-height: nth($fs-font-size, 2);
+      }
+    }
+    @else {
+      font-size: $fs-font-size;
+    }
+  }
+
+ /* исп-ние 	*/
+ p { @include font-size($p-font-sizes); }
+
+ ==== ====
+
+===============================
+---- импорт шрифта ------------
+$family: unquote("Droid+Sans");
+@import url("http://fonts.googleapis.com/css?family=#{$family}");
+-------------------------------
+==== @import ==================
+ _colors.scss => @import "colors";
+===============================
+
+
+
+===============================
+===============================
+===============================
+==== Литература ========================
+1: Верстка. Девид Макфарланд - Новая большая книга CSS - 2016
+2: https://webref.ru/layout/sass
+3: http://prgssr.ru/development/estetichnyj-sass-chast-1-arhitektura-i-organizaciya.html
+4: http://prgssr.ru/development/estetichnyj-sass-chast-2-cveta-i-palitry.html
+5: http://prgssr.ru/development/estetichnyj-sass-chast-3-tipografika-i-vertikalnyj-ritm.html
+6: https://sass-scss.ru/documentation/

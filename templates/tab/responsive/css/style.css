@@ -1,0 +1,94 @@
+@charset "UTF-8";
+@import url("http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css");
+/*
+**      Variables
+ */
+/*
+**  responsive
+ */
+/*
+ *  layout
+ */
+.tabs {
+  min-width: 320px;
+  max-width: 800px;
+  padding: 0;
+  margin: 0 auto; }
+  .tabs > section {
+    background-color: #fff;
+    padding: 15px;
+    border: 1px solid #ddd;
+    display: none; }
+    .tabs > section > p {
+      margin: 0;
+      line-height: 1.5;
+      color: #383838;
+      animation-duration: 1s;
+      animation-fill-mode: both;
+      animation-name: fadeIn; }
+  .tabs > input {
+    position: absolute;
+    display: none;
+    /* Стили для активной вкладки */ }
+    .tabs > input:checked + label {
+      color: #555;
+      border-top: 1px solid #093;
+      border-bottom: 1px solid #fff;
+      background-color: #fff; }
+  .tabs > label {
+    display: inline-block;
+    margin: 0 0 -1px;
+    padding: 15px 25px;
+    font-weight: 600;
+    text-align: center;
+    color: #aaa;
+    border: 1px solid #ddd;
+    background-color: #f1f1f1;
+    border-radius: 10px 10px 0 0;
+    /* Шрифт-иконки от Font Awesome в формате Unicode */ }
+    @media (min-width: 381px) and (max-width: 768px) {
+      .tabs > label {
+        font-size: 0; } }
+    @media (max-width: 380px) {
+      .tabs > label {
+        font-size: 0; } }
+    @media (max-width: 380px) {
+      .tabs > label {
+        padding: 15px; } }
+    .tabs > label:before {
+      font-family: fontawesome;
+      font-weight: normal;
+      margin-right: 10px; }
+      @media (min-width: 381px) and (max-width: 768px) {
+        .tabs > label:before {
+          margin: 0;
+          font-size: 18px; } }
+      @media (max-width: 380px) {
+        .tabs > label:before {
+          margin: 0;
+          font-size: 18px; } }
+    .tabs > label[for*="1"]:before {
+      content: "\f19a"; }
+    .tabs > label[for*="2"]:before {
+      content: "\f17a"; }
+    .tabs > label[for*="3"]:before {
+      content: "\f13b"; }
+    .tabs > label[for*="4"]:before {
+      content: "\f13a"; }
+    .tabs > label:hover {
+      color: #888;
+      cursor: pointer; }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+/* Активация секций с помощью псевдокласса :checked */
+#tab1:checked ~ #content-tab1,
+#tab2:checked ~ #content-tab2,
+#tab3:checked ~ #content-tab3,
+#tab4:checked ~ #content-tab4 {
+  display: block; }
+
+/*# sourceMappingURL=style.css.map */

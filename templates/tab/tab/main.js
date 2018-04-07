@@ -1,0 +1,1 @@
+$("#tab-container").easytabs();

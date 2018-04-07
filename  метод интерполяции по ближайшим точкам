@@ -1,0 +1,53 @@
+ метод интерполяции по ближайшим точкам 
+
+.edge {
+    image-rendering: -moz-crisp-edges; /* Firefox */
+    -ms-interpolation-mode: nearest-neighbor;  /* IE */
+    image-rendering: crisp-edges; /* Стандартное свойство */
+   }
+
+
+
+overflow: hidden; /* Прячем всё за пределами */
+
+
+
+ object-fit: cover; /* Вписываем фотографию в область */
+
+
+
+выравнивание изображени по середине текста
+
+p img {
+    vertical-align: middle;
+   }
+
+рамки
+
+ img {
+    border: 3px solid transparent; /* Прозрачная рамка */
+   }
+   img:hover {
+    border: 3px solid #00af64; /* Цветная рамка */
+   }
+
+img:hover {
+ outline: 3px solid #00af64; /* Цветная рамка */
+}
+outline не влияет на размеры элемента
+
+box-shadow: 0 0 0 1px цвет
+
+
+
+
+ Карта-изображение
+ 
+ <img src="" width="" height="" alt="" usemap="#navigation">
+ <map name="navigation">
+   <area shape="poly" coords="113,24,211,24,233,0,137,0" href="inform.html" alt="Информация" title="Информация">
+   <area shape="poly" coords="210,24,233,0,329,0,307,24" href="activity.html" alt="Мероприятия" title="Мероприятия">
+ </map>
+
+
+

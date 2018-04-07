@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<!-- https://www.youtube.com/watch?v=5YKM5Olq-g4&index=8&list=PLY4rE9dstrJz25gq63HjXIOPg0ailynCN -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title></title>  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <!-- <script src="https://use.fontawesome.com/1d65eb20d7.js"></script> -->
+
+<style>
+	html, body{
+		height: 100%;
+		width: 100%;
+		background-color: hsla(25, 40%, 70%, 0.5);
+	}
+	.wrapper{
+		/*height: 100%;*/
+		/*background-color: hsla(30, 40%, 70%, 0.5);*/
+		/*overflow: hidden;*/
+	}
+	.nav ul{
+		display: block;
+		/*text-align: justify;*/
+	}
+	.nav{
+		position: fixed;
+		top: 0;
+		z-index: 10;
+		background-color:  hsla(0, 50%, 50%, 0.1);
+		width: 100%;
+
+	}
+	.nav li{
+		display: inline-block;
+		margin: 5px 15px; 
+
+
+	}
+	a{
+		text-decoration: none;
+		color: #fff;
+
+	}
+	.active{
+		/*background-color: hsla(75, 90%, 70%, 1);*/
+		padding: 6px;
+		border: 1px solid hsla(75, 90%, 90%, 1);
+	}
+	.section{
+		 width: 100vw; 
+		 height: 95vh; 
+		 text-align: center;
+	}
+	.section[data-section="one"]{background-color: hsla(5, 90%, 70%, 0.5); margin-top: 25px;}
+	.section[data-section="two"]{background-color: hsla(55, 90%, 70%, 0.5); }
+	.section[data-section="three"]{background-color: hsla(105, 90%, 70%, 0.5); }
+	.section[data-section="four"]{background-color: hsla(155, 90%, 70%, 0.5); }
+	.section[data-section="five"]{background-color: hsla(205, 90%, 70%, 0.5); }
+	.section[data-section="six"]{background-color: hsla(255, 90%, 70%, 0.5); }
+	.section[data-section="seven"]{background-color: hsla(305, 90%, 70%, 0.5); }
+</style> 
+<script src="https://use.fontawesome.com/1d65eb20d7.js"></script>
+</head>
+<body>  
+	<div class="wrapper">
+		<nav class="nav">
+			<div class="container">
+				<ul class="nav__list">
+					<li class="nav__item active"><a href="#one" class="nav__item-link">One</a></li>
+					<li class="nav__item"><a href="#two" class="nav__item-link">Two</a></li>
+					<li class="nav__item"><a href="#three" class="nav__item-link">Three</a></li>
+					<li class="nav__item"><a href="#four" class="nav__item-link">Four</a></li>
+					<li class="nav__item"><a href="#five" class="nav__item-link">Five</a></li>
+					<li class="nav__item"><a href="#six" class="nav__item-link">Six</a></li>
+					<li class="nav__item"><a href="#seven" class="nav__item-link">Seven</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class="wrapper__inner">
+			<section class="section" data-section="one">
+				<div class="section__title">One</div>
+			</section>
+			<section class="section" data-section="two">
+				<div class="section__title">Two</div>
+			</section>
+			<section class="section" data-section="three">
+				<div class="section__title">Three</div>
+			</section>
+			<section class="section" data-section="four">
+				<div class="section__title">Four</div>
+			</section>
+			<section class="section" data-section="five">
+				<div class="section__title">Five</div>
+			</section>
+			<section class="section" data-section="six">
+				<div class="section__title">Six</div>
+			</section>
+			<section class="section" data-section="seven">
+				<div class="section__title">Seven</div>
+			</section>
+		</div>
+	</div>
+
+<script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script>
+	$(document).ready(function(){
+
+		$('.nav__item-link').on('click', function(e){
+			e.preventDefault();
+
+			var 
+				section = $(this).attr('href');
+			showSection(section, true);
+		});
+
+		showSection(window.location.hash, false);
+
+	});
+	$(window).scroll(function(){
+		checkSection();
+	});
+
+	function showSection(section, isAnimate){
+		var	
+			direction = section.replace(/#/, ''),
+			reqSection = $('.section').filter('[data-section="' + direction + '"]'),
+			reqSectionPos = reqSection.offset().top;
+
+		if (isAnimate) {
+			$('body, html').animate({scrollTop: reqSectionPos}, 500);
+		} else {
+			$('body, html').scrollTop(reqSectionPos);
+		}
+
+	};
+
+	function checkSection(){
+		$('.section').each(function(){
+			var
+				$this = $(this),
+				topEdge = $this.offset().top - 200,
+				bottomEdge = topEdge + $this.height(),
+				wScroll = $(window).scrollTop();
+
+				if (topEdge < wScroll && bottomEdge > wScroll) {
+					var 
+						currentId = $this.data('section'),
+						reqLink = $('.nav__item-link').filter('[href="#' + currentId + '"]');
+
+					reqLink.closest('.nav__item').addClass('active')
+						.siblings().removeClass('active');
+				}
+		});
+	};
+</script>
+<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+</body>
+</html>  

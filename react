@@ -1,0 +1,51 @@
+==== Настройка окружения ====
+# npm i -g create-react-app 
+============================= 
+
+==== Konsole
+1. create-react-app app
+2. npm start
+
+
+
+
+
+==== синтаксис jsx ====
+
+
+=======================
+ ~~ либо key=""
+ function Article() {
+	return 	[
+    	<h2 key="a">title</h2>,
+    	<section key="b">body</section>
+	]
+ }
+
+ ~~ либо общий родитель
+ function Article() {
+	return 	(
+      <div>
+    	<h2>title</h2>
+    	<section>body</section>
+	  </div>
+    )
+ }
+ 
+
+ ~~ добавление модуля: <Article/> || <Article></Article>
+function App() {
+	return (
+      <div>
+        <h1>App Name</h1>
+        <Article/>
+      </div>
+           
+    )
+}
+
+==== ссылки =====
+1: create react app
+	https://github.com/facebook/create-react-app
+
+

@@ -1,0 +1,166 @@
+$duration: 0.5s;
+$delay-hamburger: 0.5s; 
+$delay-cross: 0s;   
+$bgc-body: #566973;
+$bgc-menu: #398839;
+$bgc-1: rgba(255,255,255,.4); 
+$bgc-2: rgba(255,255,255,.8); 
+$p-ul: 10px 18px;
+$m-li: 0 50px 0 0;   
+$font-color: #fff;  
+$font-size-menu: 17px; 	/* 	px		*/
+$b-shadow-menu: 0 1px 1px rgba(0, 0, 0, 0.15);
+$t-shadow-a: 0 1px 1px rgba(0, 0, 0, 0.5); 
+$color-active: #ddd; 	/*	hover	*/
+/*---- 	responsive		----*/
+$lg: 860px; 
+$b-radius-menu: 10px; 
+$m-li-laptop: 5px 0; 
+
+
+// $border-radius-menu: 3px;
+
+/*---- 	Общие стили 	----*/
+   
+*{
+  transition: $duration ease-in-out;
+  box-sizing: border-box; 
+} 
+body{ 
+  background-color: $bgc-body;   
+} 
+/*---- 	Стили для меню 	----*/
+.toggle-nav{
+	display: none; 
+}
+ 
+.menu{
+	width: 100%;  
+	ul{
+		display: inline-block; 
+		background-color: $bgc-menu;
+		width: 100%; 
+		text-align: center;  
+ 
+	} 
+	li{
+		display: inline-block; 
+		margin: $m-li;
+		// float: left;  
+		list-style: none; 
+		font-size: $font-size-menu;
+
+		&:last-child{
+			margin-right: 0; 
+		}
+	}
+	a{
+		text-shadow: $t-shadow-a;
+		color: $font-color;
+		transition: color linear 0.15s; 
+		text-decoration: none;  
+
+		&:hover{
+			color: $color-active;
+		}
+	}
+	.current-item{
+		@extend a:hover;   
+	}
+}
+
+/*---- 	Responsive 		----*/
+/*		dectop 				*/
+@media screen and (min-width: $lg + 1px) {
+	body{ 
+		background-color: yellow;
+	}
+	.menu{
+		width: 100%;  
+		padding: $p-ul;
+		box-shadow: $b-shadow-menu;
+	}
+} 
+/*		lg dectop 			*/
+// @media screen and (max-width: 1150px) {
+// 	body{
+// 		background: blue; 
+//  	} 
+// 	.wrap{
+// 		width: 90%;
+// 	}
+// }    
+
+/*		laptop 				*/
+@media screen and (max-width: $lg) {
+	body {
+		background-color: red;  
+	}
+	.menu {
+		position: relative;
+		display: inline-block;
+		width: 100%;  
+
+		ul.active {  
+			display: none;   
+		} 
+		ul{
+			width: 100%; 
+			position: absolute;
+			top: 65%;     
+			left: 0;  
+			padding: $p-ul; 
+			box-shadow: $b-shadow-menu; 
+			border-radius: $b-radius-menu;
+
+			/*	стрелка	*/
+			// &:after{
+			// 	width: 0;
+			// 	height: 0;
+			// 	position: absolute;
+			// 	top: 0%;
+			// 	left: 22px;
+			// 	content: ""; 
+			// 	transform: translate(0%, -100%); 
+			// 	border-left:   7px solid transparent;
+			// 	border-right:  7px solid transparent;
+			// 	border-bottom: 7px solid $bgc-menu;  
+			// }  
+		} 
+		li {
+			margin: $m-li-laptop;
+			float: none;
+			display: block; 
+		}  
+		a{
+			display: block; 
+		}
+	}  
+	.toggle-nav {
+		width: 100%; 
+		text-align: center; 
+		padding: 20px;   
+		position: relative;    
+		// float: left; 
+		display: inline-block; 
+		box-shadow: $b-shadow-menu; 
+		background-color: $bgc-menu;  
+		text-shadow: $t-shadow-a;
+		color: $font-color; 
+		font-size: $font-size-menu + 3px; 
+		transition: color linear 0.15s; 
+
+		&:hover{
+			color: $color-active; 
+			cursor: pointer;   
+			
+		}
+		&.active {
+			@extend .toggle-nav:hover; 
+		} 
+		.open{
+			display: none; 
+		}
+	}
+} 
+  

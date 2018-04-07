@@ -1,0 +1,26 @@
+<script>
+	$(document).ready(function() {
+
+	$("#form").submit(function() {
+		$.ajax({
+			type: "POST",
+			// указываем файл обработки формы
+			url: "mail.php",
+			data: $(this).serialize()
+		}).done(function() {
+			$(this).find("input").val("");
+
+			// первый вариант
+			alert("Спасибо за заявку! Скоро мы с вами свяжемся.");
+
+			// или можно прикрутить модальное окно
+			$('#modal-window').modal('show');
+
+			// сброс данных с форм
+			$("#form").trigger("reset");
+		});
+		return false;
+	});
+	
+});
+</script>

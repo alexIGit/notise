@@ -1,0 +1,16 @@
+
+---- текушее время
+ --html
+ Текущее время: <span id='time'>00:00:00</span><br>
+ --js
+ setInterval("showtime(O('time'))", 1000);
+
+ function showtime(object) {
+	var date = new Date();
+	object.innerHTML = date.toTimeString().substr(0,8);
+ }
+ function O(obj) { if (typeof obj == 'object') return obj; else return document.getElementById(obj); }
+ 
+------------------------------
+
+

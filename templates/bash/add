@@ -1,0 +1,8 @@
+#!/bin/bash
+
+let delay=1
+echo "запускаемый скрипт"
+echo "который создает папку tmp"
+sleep 2
+mkdir tmp
+

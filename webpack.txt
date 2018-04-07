@@ -1,0 +1,70 @@
+https://github.com/iliakan/webpack-screencast/blob/master/04-dynamic-1/frontend/login.js
+==== Структура файлов ====
+
+project\
+	home.html	
+			// script => build.js
+	home.js		
+	welcome.js
+	webpack.config.js 
+			// entry: ./home
+			// output: build.js
+	build.js
+
+==========================
+==== Сборка webpack ======
+ Простой конфиг			//
+ Внешний доступ к модулям	// + library: "home"
+ Пересборка при изменениях	// + watch: NODE_ENV == 'development'
+ Source maps			//
+ Окружение, NODE_ENV		// EnvirnmentPlugin или DefinePlugin
+ Babel.js			//
+ Resoving			// поиск модулей
+ Минификация			// UglifyJsPlugin
+
+ Несколько точек входа		// entry: {home:"...", about:"...", ...}
+ NoErrorsPlugin			// NoEmitOnErrorsPlugin
+ CommonsChunkPlugin		//
+ Информация о сборке		// stats.json
+ Настройки CommonsChunkPlugin	//
+ Общий код в common.js		//
+ Мульти-компиляция		//
+
+ Динамический require		//	ensure([])
+
+==========================
+
+ sudo npm i -g webpack			// лучше без sudo 
+ webpack
+ 
+ ---- Установка сервера ----
+ sudo npm i -g node-static
+ static &
+	
+ http://127.0.0.1:8080/home.html	// в браузере
+ --------------------------- 
+
+ ---- Доступ к глобальным переменным
+ 1.	exports.welcome = welcome	// home.js
+ 2.	library: "home"			// .config.js
+ 3.	==> var home =			// build.js	 	
+ 4.	home.welcome("something?")	// .html
+ ----------------------------
+
+ ---- Консоль
+ webpack --display-modules		// показывает какие модули куда ушли
+ webpack --json --profile >stats.json	// http://webpack.github.io/analyse/
+					// --json 	- статистика о сборке
+					// --profile	- временная инф-я
+
+ ----------------------------
+
+==== все установленные модули =
+ -g webpack
+ -g node-static
+ webpack
+ babel-loader	 	// (я исп-л) npm install babel-loader babel-core babel-preset-es2015 webpack --save-dev
+ webpack
+ babel-runtime
+
+

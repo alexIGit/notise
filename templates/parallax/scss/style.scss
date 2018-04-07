@@ -1,0 +1,28 @@
+%total-style{
+	min-height: 1000px; 
+	height: 500px; 
+	margin: 0 auto;
+	width: 100%;
+	max-width: 1920px;
+	position: relative; 
+}
+%total-article{  
+	height: 258px;
+	position: absolute;
+	text-align: center;
+	top: 300px;
+	width: 100%;  
+}
+#home{
+	background: url(../img/home-bg.jpg) center 0 repeat fixed;
+	@extend %total-style;
+	article{ 
+		@extend %total-article;
+	} 
+}
+#about{ 
+	background: url(../img/about-bg.jpg) center 0 repeat fixed;
+	@extend %total-style;
+	-webkit-box-shadow: 0 0 50px rgba(0, 0, 0, 0.8); 
+	box-shadow: 0 0 50px rgba(0, 0, 0, 0.8); 
+}        
