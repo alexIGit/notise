@@ -1,5 +1,0 @@
-#!/bin/bash
-
-echo "Запуск другого скрипта"
-sudo chmod +x add
-sh ./add

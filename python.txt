@@ -234,7 +234,7 @@ print( lang , 'Is' , 'Fun' , sep = ' * ' , end = '!\n' )
  .swapcase( )	 | -> смена регистра
  .join( seq )	- Сборка строки из списка seq с добавлением разделителя
  .lstrip( )	-| Удаление () пробелов ( (@#) символов) в начале строки
- .rstrip ( )	 | 		     			 в конце строки
+ .rstrip( )	 | 		     			 в конце строки
  .strip( )	 |		     			 в начале и конце
  .replace(old,new)- Замена всех подстрок old на подстроку new
  .ljust(w, c)	-| Подгоняет строку под ширину в w символов, добавляя справа символы c
@@ -432,7 +432,7 @@ print( lang , 'Is' , 'Fun' , sep = ' * ' , end = '!\n' )
 
  arr.reverse()
 
- arr1 = arr2 	// ссылаются на одну яцейку памяти
+ arr1 = arr2 	// ссылаются на одну ячейку памяти
 
  arr.index(i)	- поиск elem по индексу
  elem in arr	- true/false
@@ -869,7 +869,7 @@ print( lang , 'Is' , 'Fun' , sep = ' * ' , end = '!\n' )
  try:
     raise NameExcept() 	- raise использовался для того, чтобы именно вызвать то
 			  исключение, которое мы описали.
-			  raise - озбудить исключение.
+			  raise - возбудить исключение.
  except NameExcept:
     ... 
  ---- ---- 
@@ -965,7 +965,7 @@ print( lang , 'Is' , 'Fun' , sep = ' * ' , end = '!\n' )
 
   re.compile('regexp')	- шаблон
 
-  tmp.match('str')		- соответствие шаблону  -> (obj || None)
+  tmp.match('str')		- соответствие шаблону  -> (obj || None) 
 						obj.start()	- позиция начала совпадения
 						obj.end()	- 		  конца
 						obj.group()	- вся строка совпадения
@@ -1147,10 +1147,18 @@ print( lang , 'Is' , 'Fun' , sep = ' * ' , end = '!\n' )
  del a 		# -> print('Удалить объект')
 
  ---- --- создание списков, словарей из классов и доступ к ним
- class Object(object): 		def paint(self):	print('Рисую Object')
- class Rectangle (object):	def paint(self):	print('Рисую Прямоугольник')
- class RectangleWithFill(Rectangle): def paint(self):	super(RectangleWithFill, self).paint()
-							print('Рисую полный Прямоугольник')
+ class Object(object): 		
+	def paint(self):		
+		print('Рисую Object')
+
+ class Rectangle (object):	
+	def paint(self):
+		print('Рисую Прямоугольник')
+
+ class RectangleWithFill(Rectangle): 
+	def paint(self):
+		super(RectangleWithFill, self).paint()
+		print('Рисую полный Прямоугольник')
   obj_list=[Object(), Rectangle(), RectangleWithFill()]
   for i in obj_list:
      i.paint()
@@ -1837,7 +1845,7 @@ alist2 = json.loads(json_list2)
 # !!! кортедж переводится в массив
 
 =====================
-==== Data Base ======
+==== Data Base == db ====
 import sqlite3
 
 print(sqlite3.apilevel)   # версия api
@@ -1860,6 +1868,11 @@ cur.executescript(sql)
 cur.close()
 con.close()
 =================================
+
+==== mysql ====	
+pip p install PyMySQL
+
+===============
 ==== Получение информации о web страницах ====
 import urllib.request
 import urllib.parse
@@ -1920,4 +1933,85 @@ pprint.pprint(db)
 
 
 ===================================
+== парсинг ==
+from urllib.request import urlopen
+# html = urlopen('http://pythonscraping.com/pages/page1.html')
+print(html.read())
+
+-- beautifulSoup --
+url2 = 'http://bit.ly/1KGe2Qk'
+html = urlopen(url2)
+bsObj = BeautifulSoup(html)
+
+.read()
+.get()
+.get_text()
+.findAll() || .find_all()
+.find()						// .find("tag", class_="name")
+							// .find("tag", text="name")
+							// .find("tag", {"data-set"="name"})
+.children		
+.descendants	- потомки
+
+.next_sibling
+.find_next_sibling()
+
+.netx_siblings
+
+
+.previous_sibling
+.find_previous_sibling()
+
+.previous_siblings
+
+.parent
+.find_parent(class_="class_name")
+
+.parents
+.find_parents(class_="class_name")
+
+.attrs['src']
+
+nameList = bsObj.findAll("span", {"class":"green"}).children
+for name in nameList:
+    print(name.get_text())
+
+-- таблицы csv --
+from io import StringIO
+import csv
+
+html = urlopen("http://www.pythonscraping.com/files/MontyPythonAlbums.csv")
+	.read()
+	.decode('ascii', 'ignore')
+
+dataFile = StringIO(html)
+csvReader = csv.reader(dataFile)
+// csvReader = csv.DictReader(dataFile)		-> в виде словаря
+for row in csvReader:
+    print(row)
+
+
+
+-----------------
+-- задание headers, User-Agent --
+import requests 
+from bs4 import BeautifulSoup
+
+session = requests.Session()
+headers = {
+    "User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit 537.36 (KHTML, like Gecko) Chrome",
+    "Accept":"text/html, app;ication/xhtml+xml, application/xml; q=0.9,image/webp,*/*;q=0.8"}
+
+url = "https://www.whatismybrowser.com/developers/what-http-headers-is-my-browser-sending"
+req = session.get(url, headers=headers)
+bsObj = BeautifulSoup(req.text)
+print(bsObj.find("table", {"class":"table-striped"}).get_text)
+
+
+ -- scrapy
+ pip install scrapy
+scrapy startproject pro
+ 
+
+=============
 

@@ -4,7 +4,7 @@
  1. виртуальное окружение 
 
  sudo apt-get install python3-venv
- python3 -m venv myvenv
+ python3 -m venv env
 
  source myvenv/bin/activate
  
@@ -15,6 +15,11 @@
 
  pip install --upgrade pip
  pip install django~=1.11.0
+
+ -- проверка версии
+ >>> import django 
+ >>> print(django.get_version())
+
 
 ===================
 
@@ -37,7 +42,14 @@
  python manage.py runserver 0:8000
 
 
- pytho manage.py startapp blog
+ python manage.py startapp blog
+
+ °°°° последовательность осн. команд при разработке °°°°
+ 1. изменения в models.py
+ 2. python manage.py makemigrations 
+ 3. python manage.py migrate 
+
+ °°°°
 
  ---- mysite/settings.py 
 
@@ -51,6 +63,12 @@
  python manage.py makemigrations blog		-  добавление нашей модели в базу данных
  python manage.py migrate blog
 
+ -- -- если ошибка, то в urls.py дописываем
+ from django.conf.urls import url
+
+ -- admin.py
+ from .models import Article
+ admin.site.register(Article)
 
  ==== Администрирование
 
@@ -58,6 +76,59 @@
 	girl admingirl
 
  ===============================
+ == mysql ==
+ ...$ sudo apt-get install libmysqlclient-dev
+ (env)...$ pip install mysqlclient
+
+
+ ===========
+==== шаблоны == templates ==
+ {% for item in list %}{% endfor %} - итерация посписку
+ {% if var %}{% endif %} 			- условное отображение
+ {% include "tpl.html" %} 			- включение подшаблона
+ {{ var }} 							- вывод переменной
+ {{ var | truncatechars:9 }} 		- применение фильтров
+
+ {# comment #}, 
+ {% comment %}{% endcomment %} 		- комментарии
+
+ -- Доступ к свойствам и методам -- 
+ -- -- Через точку можно получить свойство, метод, ключ либо индекс объекта:
+ {{ object.content }}
+ {{ name.strip }}
+ {{ info.avatar }}
+ {{ post_list.0 }}
+
+ -- -- Передавать параметры методам запрещено:
+ {{ post_list.order_by('id') }} <!-- ошибка -->
+ {{ post_list.delete }}
+
+ -- 
+ {% extends "base.html" %}
+ {% block title %}  
+	{{ block.super }} – главная
+ {% endblock %}
+
+ {% block content %}
+    {% for obj in post_list %}    
+		<div class="question">        
+			<a href="{{ obj.build_url }}">{{ obj }}</a>
+	        {{ obj.created_date|date:"d.m.Y" }}
+	    </div> 
+   {% endfor %}
+ {% endblock %}
+
+ -- -- base.html
+ <head>
+    <title>{% block title %}Q&A{% endblock %}</title>
+    {% block extrahead %}
+	{% endblock %}
+ </head>
+ <body> 
+    {% block content %}
+	{% endblock %}
+ </body>
+============================
 
  ==== pythonanywhere ====
  ---- console
@@ -106,5 +177,450 @@ application = StaticFilesHandler(get_wsgi_application())
     form = PostForm()
     return render(request, 'blog/post_edit.html', {'form':form})
 
+ -- django.shortcuts
+
+ render(request, 		// обязательно
+		template_name,	// обязательно
+		context=None, 
+		context_instance=_context_instance_undefined, 
+		content_type=None, 
+		status=None, 
+		current_app=_current_app_undefined, 
+		dirs=_dirs_undefined, 
+		using=None)
+
+ render_to_string(	template_name, 
+					context=None, 
+					context_instance=_context_instance_undefined,
+					request=None, 
+					using=None)
  ---- 
  ================
+
+ == https://djbook.ru/rel1.9/ref/models/options.html
+
+ class Meta:
+	abstract = True
+	app_label = 'myapp'
+	db_table = 'music_album'
+	db_tablespace
+	default_related_name
+	get_latest_by = "order_date"
+	managed=False
+	order_with_respect_to = 'question'
+	ordering = ['-order_date']
+	permissions = (("can_deliver_pizzas", "Can deliver pizzas"),)
+	default_permissions
+	proxy = True
+	required_db_features
+	required_db_vendor
+	select_on_save
+	unique_together = (("driver", "restaurant"),)
+
+	index_together = [
+	    ["pub_date", "deadline"],
+	]
+	
+	verbose_name = "pizza"
+	verbose_name_plural = "stories"
+ == 
+ == Выполнение запросов ==
+ Model.objects.
+	.create(name="Joe")
+	.get(name="Cheddar Talk")
+	.all()							// Получение всех объектов
+	.all()[:5]						// лимит
+	.filter(pub_date__year=2006)
+	.exclude(...)				// объекты, которые не удовлетворяют параметрам фильтрации
+
+	-- фильтры --
+	~~ Фильтры полей
+	Entry.objects.get(headline__exact="Cat bites dog")	
+	-> SELECT ... WHERE headline = 'Cat bites dog';
+
+	__exact			// “Точное” совпадение.
+	__iexact		// Регистронезависимое совпадение
+	__contains		// Регистрозависимая проверка на вхождение.	
+					-> LIKE '%Lennon%'
+	__ icontains	// РегистроНЕзависимая
+
+	__startswith	// Поиск по началу и окончанию соответственно. 
+	__ endswith		//
+	__istartswith 	// регистронезависимые версии 
+	__iendswith		// 
+	
+	~~ Фильтры по связанным объектам
+	__name			// 
+
+ Blog.objects.filter(entry__headline__contains='Lennon')
+	// 	все объекты Blog, которые имеют хотя бы один связанный объект Entry с headline содержащим 'Lennon'
+
+	__isnull=True	// 
+
+	~~ многие-ко-многим
+	~~
+	from django.db.models import Q
+	Q(question__startswith='Who') | Q(question__startswith='What')
+	-> WHERE question LIKE 'Who%' OR question LIKE 'What%'
+	
+	~	-> NOT
+	Q(question__startswith='Who') | ~Q(pub_date__year=2005)
+
+ ----
+ Poll.objects.get(
+    Q(question__startswith='Who'),
+    Q(pub_date=date(2005, 5, 2)) | Q(pub_date=date(2005, 5, 6))
+ )
+ ->
+ SELECT * from polls WHERE question LIKE 'Who%'
+    AND (pub_date = '2005-05-02' OR pub_date = '2005-05-06')
+ ----
+
+ 	--  QuerySet -- https://djbook.ru/rel1.9/ref/models/querysets.html
+
+ add(obj1, obj2, ...)	- Добавляет указанный объект к связанным объектам.
+ create(**kwargs)		- Создает новый объект, 
+						  сохраняет его и добавляет к связанным объектам.
+						  Возвращает созданный объект.
+ remove(obj1, obj2, ...)- Удаляет указанный объект из списка связанных объектов.
+ clear()				- Удаляет все объекты из списка связанных.
+ set(objs)				- Запросы со связанными объектами.
+
+ 	b = Blog.objects.get(id=1)
+	b.entry_set = [e1, e2]
+
+
+ filter(**kwargs)
+ exclude(**kwargs)	- -> новый QuerySet содержащий объекты не отвечающие параметрам фильтрации
+	Entry.objects.exclude(pub_date__gt=datetime.date(2005, 1, 3), headline='Hello')
+	->
+	SELECT ...
+	WHERE NOT (pub_date > '2005-1-3' AND headline = 'Hello')
+	--
+	Entry.objects.exclude(pub_date__gt=datetime.date(2005, 1, 3)).exclude(headline='Hello')
+	->
+	SELECT ...
+	WHERE NOT pub_date > '2005-1-3'	
+	AND NOT headline = 'Hello'
+	--
+ annotate(*args, **kwargs)	- Добавляет к каждому объекту QuerySet 
+							  результаты указанных выражений. 
+ order_by(*fields)
+	Entry.objects.filter(pub_date__year=2005).order_by('-pub_date', 'headline')
+
+ reverse()			- 
+ distinct(*fields)	- -> QuerySet с добавленным SELECT DISTINCT в SQL запрос. 
+ values(*fields)	- -> QuerySet , -> словари с результатом вместо объектов моделей.
+
+ values_list(*fields, flat=False)	- Аналогичен values(), но вместо словаря возвращает кортеж
+ dates(field, kind, order='ASC')	- Возвращает QuerySet, 
+									  который возвращает список объектов datetime.date,
+									  отображающих возможные даты в контексте QuerySet.
+	kind = "year" || "month" ||	"day" 
+	order – сортировка значений. По-умолчанию 'ASC', должна быть 'ASC' или 'DESC'.
+	
+	Entry.objects.dates('pub_date', 'year')
+	->	[datetime.date(2005, 1, 1)]
+	Entry.objects.dates('pub_date', 'month')
+	->	[datetime.date(2005, 2, 1), datetime.date(2005, 3, 1)]
+	Entry.objects.dates('pub_date', 'day')
+	->	[datetime.date(2005, 2, 20), datetime.date(2005, 3, 20)]
+	Entry.objects.dates('pub_date', 'day', order='DESC')
+	->	[datetime.date(2005, 3, 20), datetime.date(2005, 2, 20)]
+	Entry.objects.filter(headline__contains='Lennon').dates('pub_date', 'day')
+	->	[datetime.date(2005, 3, 20)]
+
+
+ datetimes(field_name, kind, order='ASC', tzinfo=None)
+	- Возвращает QuerySet, 
+	  который возвращает список объектов datetime.datetime, 
+	  отображающих возможные даты в контексте QuerySet.
+
+	kind должен быть "year", "month", "day", "hour", "minute" или "second". 
+	order – сортировка значений. По-умолчанию 'ASC', должна быть 'ASC' или 'DESC'.
+
+ none()		- queryset, который никогда не возвращает объекты и не выполняет запросы.
+			  qs.none() возвращает экземпляр EmptyQuerySet.
+
+ all()		- Возвращает копию текущего QuerySet (или подкласса QuerySet).
+ 
+ select_related(*fields)	- Возвращает QuerySet который автоматически включает в выборку данные
+							  связанных объектов при выполнении запроса.
+ prefetch_related(*lookups)	- Возвращает QuerySet, который получает “за один подход” связанные
+							  объекты для каждого из указанных параметров поиска.
+
+ extra(select=None, where=None, params=None, tables=None, order_by=None, select_params=None)
+		- для создания сложного условия WHERE запроса.
+		  extra() QuerySet — метод позволяющий изменять SQL сгенерированный QuerySet.
+
+ defer(*fields)		// все, кроме
+	не должны быть загружены, в метод defer():
+	Entry.objects.defer("headline", "body")
+
+ only(*fields)
+	противоположность метода defer().
+
+	у вас есть модель с полями name, age и biography.
+	Эти два запроса идентичны в плане полученных полей:
+	Person.objects.defer("age", "biography")
+	Person.objects.only("name")
+
+ using(alias)
+	Этот метод контролирует какую базу данных будет использовать QuerySet для запроса,
+	если вы используете несколько баз данных.
+
+		# queries the database with the 'default' alias.
+		>>> Entry.objects.all()
+
+		# queries the database with the 'backup' alias
+		>>> Entry.objects.using('backup')
+
+ select_for_update(nowait=False)
+	Возвращает QuerySet, блокирующий записи до завершения транзакции,
+	используя оператор SQL SELECT ... FOR UPDATE используемой базы данных.
+	
+	entries = Entry.objects.select_for_update().filter(author=request.user)
+
+ raw(raw_query, params=None, translations=None)
+	Принимает SQL запрос, выполняет его и возвращает объект django.db.models.query.RawQuerySet.
+
+	-- Методы, которые не возвращают QuerySets
+
+ .get(id='foo')
+ .create(first_name="Bruce", last_name="Springsteen")
+ .save(force_insert=True)
+ .get_or_create(first_name='John', last_name='Lennon', defaults={'birthday': date(1940, 10, 9)})
+ .update_or_create(defaults=None, **kwargs)
+ .bulk_create(objs, batch_size=None)
+		Этот метод позволяет сохранить в базе данных множество объектов одним запросом
+	Entry.objects.bulk_create([
+        Entry(headline="Django 1.0 Released"),
+        Entry(headline="Django 1.1 Announced"), 
+        Entry(headline="Breaking: Django is awesome")
+    ])
+
+ .count()
+ .in_bulk(id_list)
+		Получает список первичных ключей и возвращает словарь, ассоциирующий объекты с переданными ID.
+ .iterator()
+		Вычисляет QuerySet (выполняя запрос) и возвращает итератор по результату. 
+ .latest(field_name=None)
+ .earliest(field_name=None)
+ .first()
+ .last()
+ .aggregate(*args, **kwargs)
+		Возвращает словарь агрегированных значений (среднее значение, сума и др.) вычисленных для QuerySet
+ .exists()
+ .update(**kwargs)		// желательно после фильтер ... .filter(...).update(...)
+ .delete()
+ classmethod as_manager()
+
+ 	-- Операторы фильтрации
+
+	__exact
+	__iexact		- Точное совпадение, регистро-независимое
+
+	__contains		- Регистрозависимая проверка на вхождение.
+		Entry.objects.get(headline__contains='Lennon')
+		->
+		SELECT ... WHERE headline LIKE '%Lennon%';
+	
+	__icontains		- Регистронезависимая проверка на вхождение.
+
+	__in			- Проверяет на вхождение в список значений.
+		Entry.objects.filter(id__in=[1, 3, 4])
+		->
+		SELECT ... WHERE id IN (1, 3, 4);
+
+	__gt			- Больше чем.
+		Entry.objects.filter(id__gt=4)
+		->
+		SELECT ... WHERE id > 4;
+
+	__gte			- Больше чем или равно.
+	__lt			- Меньше чем.
+	__lte			- Меньше чем или равно.
+
+	__startswith	- Регистрозависимая проверка начинается ли поле с указанного значения.
+		Entry.objects.filter(headline__startswith='Will')
+		->
+		SELECT ... WHERE headline LIKE 'Will%';
+	
+	__istartswith	- Регистронезависимая проверка начинается ли поле с указанного значения.
+		Entry.objects.filter(headline__istartswith='will')
+		->
+		SELECT ... WHERE headline ILIKE 'Will%';
+
+	__endswith		- Регистрозависимая проверка оканчивается ли поле с указанного значения.
+		Entry.objects.filter(headline__endswith='cats')
+		->
+		SELECT ... WHERE headline LIKE '%cats';
+
+	__iendswith		- Регистронезависимая проверка оканчивается ли поле с указанного значения.
+		Entry.objects.filter(headline__iendswith='will')
+		->
+		SELECT ... WHERE headline ILIKE '%will'
+
+	__range			- Проверка на вхождение в диапазон (включающий).
+		import datetime
+		start_date = datetime.date(2005, 1, 1)
+		end_date = datetime.date(2005, 3, 31)
+		Entry.objects.filter(pub_date__range=(start_date, end_date))
+		->
+		SELECT ... WHERE pub_date BETWEEN '2005-01-01' and '2005-03-31';
+		Вы можете использовать range там же, где можно использовать BETWEEN в SQL — для дат, чисел и даже строк.
+
+
+	__date			- Для поля даты и времени преобразует значение в дату.
+
+		Entry.objects.filter(pub_date__date=datetime.date(2005, 1, 1))
+		Entry.objects.filter(pub_date__date__gt=datetime.date(2005, 1, 1))
+		->
+		(Аналог SQL не представлен т.к. реализация отличается для различных баз данных.)
+
+	__year			- Проверка года для полей date/datetime. 
+		Entry.objects.filter(pub_date__year=2005)
+		Entry.objects.filter(pub_date__year__gte=2005)
+		->
+		SELECT ... WHERE pub_date BETWEEN '2005-01-01' AND '2005-12-31';
+		SELECT ... WHERE pub_date >= '2005-01-01';
+
+	__month			- Проверка месяца для полей date/datetime.
+		Entry.objects.filter(pub_date__month=12)
+		Entry.objects.filter(pub_date__month__gte=6)
+		->
+		SELECT ... WHERE EXTRACT('month' FROM pub_date) = '12';
+		SELECT ... WHERE EXTRACT('month' FROM pub_date) >= '6';
+
+	__day			- Проверка дня месяца для полей date/datetime.
+		Entry.objects.filter(pub_date__day=3)
+		Entry.objects.filter(pub_date__day__gte=3)
+		->
+		SELECT ... WHERE EXTRACT('day' FROM pub_date) = '3';
+		SELECT ... WHERE EXTRACT('day' FROM pub_date) >= '3';
+
+	__week_day		- Проверка дня недели для полей date/datetime.
+		Entry.objects.filter(pub_date__week_day=2)
+		Entry.objects.filter(pub_date__week_day__gte=2)
+
+	__hour			- Проверка часа для полей date/datetime. 
+		Event.objects.filter(timestamp__hour=23)
+		Event.objects.filter(time__hour=5)
+		Event.objects.filter(timestamp__hour__gte=12)
+		->
+		SELECT ... WHERE EXTRACT('hour' FROM timestamp) = '23';
+		SELECT ... WHERE EXTRACT('hour' FROM time) = '5';
+		SELECT ... WHERE EXTRACT('hour' FROM timestamp) >= '12';
+
+
+	__minute		
+		Event.objects.filter(timestamp__minute=29)
+		Event.objects.filter(time__minute=46)
+		Event.objects.filter(timestamp__minute__gte=29)
+		->
+		SELECT ... WHERE EXTRACT('minute' FROM timestamp) = '29';
+		SELECT ... WHERE EXTRACT('minute' FROM time) = '46';
+		SELECT ... WHERE EXTRACT('minute' FROM timestamp) >= '29';
+
+	__second
+		Event.objects.filter(timestamp__second=31)
+		Event.objects.filter(time__second=2)
+		Event.objects.filter(timestamp__second__gte=31)
+		->
+		SELECT ... WHERE EXTRACT('second' FROM timestamp) = '31';
+		SELECT ... WHERE EXTRACT('second' FROM time) = '2';
+		SELECT ... WHERE EXTRACT('second' FROM timestamp) >= '31';
+
+	__isnull		- Принимает True или False, что соответствует SQL запросу IS NULL и IS NOT NULL
+		Entry.objects.filter(pub_date__isnull=True)
+		->
+		SELECT ... WHERE pub_date IS NULL;
+
+	__search
+		Entry.objects.filter(headline__search="+Django -jazz Python")
+		->
+		SELECT ... WHERE MATCH(tablename, headline) AGAINST (+Django -jazz Python IN BOOLEAN MODE);
+
+	__regex
+		Entry.objects.get(title__regex=r'^(An?|The) +')
+		->
+		SELECT ... WHERE title REGEXP BINARY '^(An?|The) +'; 		-- MySQL
+		SELECT ... WHERE REGEXP_LIKE(title, '^(An?|The) +', 'c'); 	-- Oracle
+		SELECT ... WHERE title ~ '^(An?|The) +'; 					-- PostgreSQL
+		SELECT ... WHERE title REGEXP '^(An?|The) +'; 				-- SQLite
+
+	__iregex	- Регистронезависимая проверка регулярным выражением.
+		Entry.objects.get(title__iregex=r'^(an?|the) +')
+		->
+		SELECT ... WHERE title REGEXP '^(an?|the) +'; 				-- MySQL
+		SELECT ... WHERE REGEXP_LIKE(title, '^(an?|the) +', 'i'); 	-- Oracle
+		SELECT ... WHERE title ~* '^(an?|the) +'; 					-- PostgreSQL
+		SELECT ... WHERE title REGEXP '(?i)^(an?|the) +'; 			-- SQLite
+
+
+	-- Функции агрегации
+
+ expression		- Строка, которая указывает на поле модели, или выражение.
+ output_field	- Необязательный аргумент, который определяет поле модели результата.
+ **extra		- Именованные аргументы,
+				  которая указывают дополнительный контекст для SQL, созданного для агрегации.
+ Avg
+ class Avg(expression, output_field=FloatField(), **extra)
+	Возвращает среднее значение указанного выражения, которое должно быть численным,
+    если только вы не указали другой output_field..
+
+	Псевдоним по-умолчанию: <field>__avg
+	Тип возвращаемого значения: float (или тип указанного output_field).
+ 
+ Count	
+ class Count(expression, distinct=False, **extra)
+	Возвращает количество объектов связанных через указанное выражение.
+
+	Псевдоним по-умолчанию: <field>__count
+	Тип возвращаемого значения: int
+	Принимает один не обязательный параметр:
+	distinct
+		При distinct=True, будут подсчитаны только уникальные объекты. 
+		SQL эквивалент – COUNT(DISTINCT <field>). Значение по-умолчанию False.
+
+ Max
+ class Max(expression, output_field=None, **extra)
+	Возвращает максимальное значение указанного выражения.
+	Псевдоним по-умолчанию: <field>__max
+	Тип возвращаемого значения: тип указанного поля, или output_field.
+
+ Min
+ class Min(expression, output_field=None, **extra)
+	Возвращает минимальное значение указанного выражения.
+	Псевдоним по-умолчанию: <field>__min
+	Тип возвращаемого значения: тип указанного поля, или output_field.
+
+ StdDev
+ class StdDev(expression, sample=False, **extra)
+	Возвращает стандартное отклонение для данных указанного выражения.
+	Псевдоним по-умолчанию: <field>__stddev
+	Тип возвращаемого значения: float
+	Принимает один не обязательный параметр:
+		sample
+		По-умолчанию, StdDev возвращает “population” стандартное отклонение.
+		если использовать аргумент sample=True, возвращаемое значение будет “sample” стандартное отклонение.
+
+ Sum
+ class Sum(expression, output_field=None, **extra)
+	Возвращает сумму всех значений указанного выражения.
+	Псевдоним по-умолчанию: <field>__sum
+	Тип возвращаемого значения: тип указанного поля, или output_field.
+
+ Variance
+ class Variance(expression, sample=False, **extra)
+	Возвращает дисперсию значений в указанном выражении.
+	Псевдоним по-умолчанию: <field>__variance
+	Тип возвращаемого значения: float
+	Принимает один не обязательный параметр:
+		sample
+		По-умолчанию, Variance возвращает “population” дисперсию. 
+	 	если использовать аргумент sample=True, возвращаемое значение будет “sample” дисперсия.
+
+	-------------
+	
+ ==

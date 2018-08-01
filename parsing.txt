@@ -1,0 +1,9 @@
+
+# env
+
+python3 -m venv env
+source myvenv/bin/activate 
+
+pip install 
+	selenium
+

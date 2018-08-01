@@ -7,7 +7,7 @@
   left: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 9999;
-  transition: opcity 400ms ease-in;
+  transition: opacity 400ms ease-in;
   display: none;
   pointer-events: none; }
   .modalDialog:target {

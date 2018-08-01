@@ -1,1 +1,6 @@
  http://htmlbook.ru/faq/kak-sdelat-stranitsu-s-oshibkoy-404
+
+-- htaccets.txt
+ErrorDocument 404 /err404.html 
+
+

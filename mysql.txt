@@ -52,6 +52,10 @@
 		  DESCRIBE classics;
 
  ALTER 		- Внесение изменений в базу данных или таблицу
+			  ALTER TABLE person ADD COLUMN phone INTEGER;
+			  ALTER TABLE person MODIFY COLUMN phone VARCHAR(11);
+
+
 
  DROP 		- Удаление базы данных или таблицы
  		  ALTER TABLE classics DROP id;
@@ -68,7 +72,9 @@
 		  SHOW tables;
 
  UPDATE 	- Обновление существующей записи
-		  UPDATE classics SET isbn='9781598184891' WHERE year='1876';
+		      UPDATE classics SET isbn='9781598184891' WHERE year='1876';
+			  UPDATE person SET PersonId = PersonId * 10;
+
 
  BACKUP 	- Создание резервной копии таблицы
  
@@ -91,10 +97,31 @@
  UNLOCK 	- Снятие блокировки таблицы (таблиц)
 
  USE 		- Использование базы данных
- SELECT		- выбор
+ SELECT		- устанавливает, какие столбцы должны присутствовать в выходных данных;
+
 		  SELECT что-нибудь FROM имя_таблицы;
-		  
-		  
+
+ SELECT [ALL | DISTINCT ] {*|[имя_столбца [AS новое_имя]]}
+	[,...][INTO переменная ]
+	FROM имя_таблицы [[AS] псевдоним] [,...]
+	[WHERE <условие_поиска>]
+	[GROUP BY имя_столбца [,...]]
+	[HAVING <критерии выбора групп>]
+	[ORDER BY имя_столбца [,...]]
+		SELECT StudentName FROM STUDENT ORDER BY StydentName;
+		
+	[LIMIT n[,m]]
+		SELECT StudentName FROM STUDENT ORDER BY StudentName LIMIT 5;
+
+		SELECT StudentName FROM STUDENT ORDER BY StudentName LIMIT 2,3;
+		Первые 3 студента из лексикографического списка, которые следуют сразу за вторым.
+
+
+	DISTINCT – факторизует результат выборки; исключает повторение
+	GROUP BY – образует группы строк, имеющих одно и то же значение в указанном столбце (или столбцах);
+	HAVING – фильтрует группы строк в соответствии с указанным условием;
+	ORDER BY – определяет упорядоченность вывода результирующих строк.
+
 -----------------------------
  ALTER TABLE classics 
  ---	MODIFY year SMALLINT;		- изменение типа данных
@@ -109,7 +136,7 @@
 	author VARCHAR(128),
     	INDEX(author(20)) ENGINE MyISAM;
 
- ---- выбор 
+ ---- выбор select 
  SELECT 
  SELECT * 		FROM classics;
  ------ COUNT(*) 	FROM classics;	- подсчет количества строк
@@ -136,8 +163,37 @@
  SELECT category,COUNT(author) FROM classics GROUP BY category;	- группировка
 		 
 
-
+ ---- ---- WHERE
+	logical expression;
+		SELECT StudentId, StudentName, BirthDate FROM STUDENT
+		WHERE Month(BirthDate) >= 6 AND Month(BirthDate) <= 8;
  
+	expression [ NOT ] BETWEEN expression AND expression;
+		SELECT DISTINCT StudentId FROM EXAM_RESULT
+		WHERE Mark BETWEEN 3 AND 5;
+
+	field-name IS [ NOT ] NULL;
+		SELECT * FROM EXAM_SHEET 
+		WHERE ClassRoom IS NULL;
+
+	field-name [ NOT ] LIKE ‘string’ [ ESCAPE ‘character’ ];
+		SELECT * FROM STUDENT 
+		WHERE Address LIKE '%Малый пр%';
+
+	 в конструкции LIKE можно использовать следующие символы шаблона:
+	• cимвол % – вместо этого символа может быть подставлено любое количество произвольных символов;
+	• cимвол _ заменяет один символ строки;
+	• [ ] – вместо символа строки будет подставлен один из возможных символов, 
+			указанный в этих ограничителях;
+	• [^] – вместо соответствующего символа строки будут подставлены все символы, 
+			кроме указанных в ограничителях.
+
+	expression [ NOT ] IN ({ value-list});
+		SELECT DISTINCT StudentId FROM EXAM_RESULT
+		WHERE Mark IN (2,4);
+
+	c использованием подзапросов (вложенных запросов). 
+
  WHERE...=
  WHERE...LIKE 
  MATCH...AGAINST		- найти в MATCH('где'), где встречаются слова AGAINST('что')
@@ -150,6 +206,11 @@
 	WHERE MATCH(author,title)
     	AGAINST('+charles -species' IN BOOLEAN MODE);
 
+ 
+
+
+ ---- ---- UPDATE
+
  UPDATE...SET			- UPDATE {где} SET {установить}
 				  UPDATE classics SET category='Classic Fiction'
 					WHERE category='Fiction';
@@ -159,6 +220,62 @@
  --------	WHERE author LIKE "Charles%" AND author LIKE "%Darwin";
  -------- 	WHERE author LIKE "%Mark Twain%" OR author LIKE "%Samuel Langhorne Clemens%";
  -------- 	WHERE author LIKE "Charles%" AND author NOT LIKE "%Darwin";
+
+ ---- Функции агрегирования
+ AVG([ ALL|DISTINCT ] <выражение>)	Вычисляет среднее арифметическое для заданного множества значений
+		-- Средний балл по итогам результатов экзаменов.
+		SELECT AVG(Mark) AS AvgMark FROM EXAM_RESULT;
+
+ COUNT( [ALL|DISTINCT] <выражение>)	Вычисляет количество записей в таблице	
+		-- Определение общего количества студентов.
+		SELECT COUNT(*) AS "Количество студентов" FROM STUDENT;
+  		
+		-- Количество групп, в которых учатся студенты.
+		SELECT COUNT(DISTINCT GroupNumber) AS GroupCount FROM STUDENT;
+
+
+ MAX(<выражение>)					Вычисляет максимальное значение в заданном множестве
+ MIN(<выражение>)					Вычисляет минимальное значение в заданном множестве
+		-- Даты рождения самого младшего и самого старшего студентов.
+		SELECT MIN(BirthDate) AS MinBirthDate,
+		MAX(BirthDate) AS MaxBirthDate
+		FROM STUDENT;
+
+ SUM([ ALL|DISTINCT ] <выражение>)	Вычисляет сумму указанных выражений в заданном множестве
+
+ 
+ ---- ---- GROUP BY
+
+ ---- агрегирование с группировкой по одному полю
+ -- Количество студентов в каждой группе.
+	SELECT GroupNumber AS "Номер группы",
+	COUNT(*) AS "Кол-во студентов в группе"
+	FROM STUDENT
+	GROUP BY GroupNumber;
+
+ ---- агрегирование с группировкой по двум полям
+ -- Сколько экзаменов назначено на каждую дату и аудиторию?
+	SELECT ClassRoom, ExamDate, 
+	COUNT(*) AS ExamCount
+	FROM EXAM_SHEET
+	GROUP BY ClassRoom, ExamDate;
+
+ ---- агрегирование с группировкой по значению функции
+ -- Как даты рождения студентов распределены по годам?
+	SELECT YEAR(BirthDate) AS "Year", 
+	COUNT(*) AS "Count of students"
+	FROM STUDENT 
+	GROUP BY YEAR(BirthDate);
+
+ ---- ---- HAVING
+ ---- агрегирование с условием для группировки
+ -- Номера зачеток студентов, получавших на экзаменах только 5.
+	SELECT StudentId FROM EXAM_RESULT
+	GROUP BY StudentId 
+	HAVING MIN(Mark) = 5;
+
+
+
 ------------------------------------------------------------
 
 ---- типы данных ----------------------------[202] Робин Никсон
@@ -229,9 +346,34 @@
 				  		   (не позволяет хранить неопределенные значения)
 
  UNIQUE			- Контроль уникальности значений атрибутов
+				  CREATE TABLE Person (
+					PersonId INTEGER UNIQUE NOT NULL,
+					DepartmentId INTEGER,
+					Name VARCHAR(30),
+					UNIQUE (DepartmentId, Name)
+				  );
+  	-- Пример: добавление ограничения UNIQUE к существующей таблице
+	ALTER TABLE Person ADD CONSTRAINT U_Phone_Person UNIQUE(PersonId, Phone);
+
  PRIMARY KEY	- Первичный ключ
+ AUTO_INCREMENT - Первичный ключ с автонумерацией // можно  AUTO_INCREMENT=100
  FOREIGN KEY	- Внешний (или ссылочный) ключ
+				  ALTER TABLE Developer
+					ADD CONSTRAINT FK_Developer
+					FOREIGN KEY(DepartmentId)
+					REFERENCES Department(DepartmentId);
+
  CHECK			- Контроль допустимых значений атрибутов
+				CREATE TABLE Person (
+					PersonId INTEGER AUTO_INCREMENT PRIMARY KEY,
+					DepartmentId INTEGER,
+					Job VARCHAR(30) CHECK (Job IN ('программист','аналитик','менеджер’)),
+					Salary REAL
+				);
+				
+				ALTER TABLE Person 
+					ADD CONSTRAINT СH_Salary_Person CHECK(Salary >= 5000 AND Salary <= 50000);
+
 
  ~~
  CREATE TABLE Person (PersonId INTEGER, DepartmentId INTEGER NOT NULL, Job VARCHAR(30));
@@ -339,9 +481,528 @@
  mysqldump -u пользователь -pпароль --no-create-info --tab=c:/temp
  	--fields-terminated-by=',' publications
 
-
 ------------------------------------------------------
 
+==== соединение таблиц ====
+---- внутреннее соединение
+Вариант 1
+	SELECT ...
+	FROM table1, table2
+	WHERE table1.field1 = table2.field2
+	--
+	SELECT CourseTitle, ExamDate
+	FROM COURSE, EXAM_SHEET
+	WHERE COURSE.CourseId = EXAM_SHEET.CourseId;
+
+
+Вариант 2
+	SELECT ...
+	FROM table1 INNER JOIN table2
+	ON table1.field1 = table2.field2
+ 	-- 
+	SELECT CourseTitle, ExamDate
+	FROM COURSE INNER JOIN EXAM_SHEET
+	ON COURSE.CourseId = EXAM_SHEET.CourseId;
+
+---- внутреннее соединение трех таблиц
+ -- Вывести расписание экзаменов (предметы, преподаватели, группы, даты)
+	SELECT CourseTitle, TeacherName, GroupNumber, ExamDate
+	FROM COURSE, EXAM_SHEET, TEACHER
+	WHERE COURSE.CourseId = EXAM_SHEET.CourseId
+		  AND TEACHER.TeacherId = EXAM_SHEET.TeacherId;
+	
+	-- или вариант 2
+	SELECT CourseTitle, TeacherName, GroupNumber, ExamDate
+	FROM COURSE 
+	INNER JOIN EXAM_SHEET
+	ON COURSE.CourseId = EXAM_SHEET.CourseId
+	INNER JOIN TEACHER
+	ON TEACHER.TeacherId = EXAM_SHEET.TeacherId;
+
+----  внутреннее соединение по неравенству
+ -- Все возможные пары студентов.
+	SELECT a.StudentName, b.StudentName
+	FROM STUDENT
+	a INNER JOIN STUDENT b
+	ON
+	a.StudentId <> b.StudentId
+	ORDER BY 1,2
+
+
+
+==== внешнего соединения
+---- Левостороннее соединение	
+	(если левое значение в столбце не имеет значения, то справа выводится NULL)
+	Иванов	+79279999999
+	Сидоров	NULL
+
+	SELECT ...
+	FROM table1, table2
+	WHERE table1 LEFT OUTER JOIN table2
+	ON table1.field1 = table2.field2
+
+---- Правостороннее соединение:
+	(если левое значение в столбце не имеет значения, то он не выводится)
+	Иванов	+79279999999
+
+	LEFT OUTER JOIN
+	SELECT ...
+	FROM table1, table2
+	WHERE table1 RIGHT OUTER JOIN table2
+	ON table1.field1 = table2.field2
+
+
+ -- -- внешние соединения для двух таблиц
+ -- Требуется вывести левостороннее и правостороннее внешние соединения таблиц STUDENT и PHONE_LIST.
+ -- -- левостороннее внешнее соединение для двух таблиц STUDENT и PHONE_LIST.
+	SELECT StudentName, Phone
+	FROM STUDENT LEFT OUTER JOIN PHONE_LIST
+	ON STUDENT.StudentId = PHONE_LIST.StudentId;
+
+
+ -- -- правостороннее внешнее соединение для двух таблиц STUDENT и PHONE_LIST.
+	SELECT StudentName, Phone
+	FROM STUDENT RIGHT OUTER JOIN PHONE_LIST
+	ON STUDENT.StudentId = PHONE_LIST.StudentId;
+
+=======================
+== вложенные запросы ==
+---- Область использования вложенных запросов
+	• некоторые формы конструкции WHERE в операторе SELECT;
+	• теоретико-множественные операции (например, UNION);
+	• вставка данных в таблицу (INSERT)
+	• любая таблица в запросе может быть представлена в виде вложенного запроса.
+
+---- Формы с подзапросами в конструкции WHERE оператора SELECT
+ • expression [ NOT ] IN (SELECT-statement)
+ • expression relation-operator ( SELECT-statement )
+ • [NOT ] EXISTS ( SELECT-statement )
+ • expression relation-operator { ANY | ALL | SOME } ( SELECT-statement )
+ • (здесь ключевые слова ANY и SOME – синонимы).
+
+---- Оператор UNION
+ SELECT-statement
+ UNION [ALL]
+ SELECT-statement
+ [UNION SELECT-statement...]
+ [ORDER BY ...]
+ [LIMIT n[,m]]
+
+
+---- запрос с проверкой на вхождение в множество 
+ -- Номера зачеток и ФИО студентов, получивших 2 на экзаменах.
+	SELECT StudentId, StudentName
+	FROM STUDENT
+	WHERE StudentId IN (
+		SELECT DISTINCT StudentId 	
+		FROM EXAM_RESULT 
+		WHERE Mark = 2
+	);
+
+
+---- запрос с проверкой существования записей подзапроса
+ -- Преподаватели, которые будут принимать экзамен по Базам данных.
+	SELECT * FROM TEACHER
+	WHERE EXISTS(
+		SELECT * 
+		FROM EXAM_SHEET 
+		WHERE EXAM_SHEET.CourseId = (
+			SELECT COURSE.CourseId 
+			FROM COURSE
+			WHERE COURSE.CourseTitle = 'Базы данных'
+			)
+			AND TEACHER.TeacherId = EXAM_SHEET.TeacherId
+	);
+
+
+---- запрос с проверкой значения всех записей подзапроса
+ -- Вся информация о студентах-отличниках.
+	SELECT * FROM STUDENT
+	WHERE 5 = ALL(
+		SELECT Mark 
+		FROM EXAM_RESULT
+		WHERE EXAM_RESULT.StudentId = STUDENT.StudentId
+	);
+
+---- агрегирование с условием для группировки
+ -- Студенты, для которых указано более одного номера телефона.
+	SELECT StudentName 
+	FROM STUDENT
+	WHERE StudentId IN (
+		SELECT StudentId
+		FROM PHONE_LIST
+		GROUP BY StudentId 
+		HAVING COUNT(*) > 1
+	);
+
+---- использование вложенного запроса в списке полей
+ -- Вычисление среднего балла студента.
+	SELECT StudentName,
+	(
+		SELECT AVG(MARK) 
+		FROM EXAM_RESULT
+		WHERE EXAM_RESULT.StudentId = STUDENT.StudentId
+	) 
+	AVG_MARK
+	FROM STUDENT;
+
+---- вложенный запрос в операторе INSERT
+ -- Добавление факультативных курсов в таблицу COURSE.
+	INSERT INTO COURSE(CourseId, CourseTitle)
+	SELECT CourseId + 1000, 
+	CONCAT(CourseTitle, '(факультатив)')
+	FROM COURSE;
+
+---- агрегирование среднего балла для групп
+	SELECT GroupNumber, 
+	AVG(MARK) AVG_MARK
+	FROM 
+	(SELECT StudentId, Mark,
+		(SELECT GroupNumber 
+		 FROM STUDENT
+		 WHERE StudentId = EXAM_RESULT.StudentId) 
+	GroupNumber FROM EXAM_RESULT) 
+	TEMP
+	GROUP BY GroupNumber;
+
+---- использование подзапросов в операторе UNION
+ -- Список номеров зачеток студентов, у которых в базе данных указан мобильный или домашний телефон
+	(SELECT StudentId FROM PHONE_LIST WHERE PhoneType = 'дом')
+	UNION
+	(SELECT StudentId FROM PHONE_LIST WHERE PhoneType = 'моб')
+	ORDER BY StudentId;
+
+
+=======================
+==== представления ====
+-- 
+ CREATE [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}]
+ VIEW view_name [(column_list)]
+ AS select_statement [WITH [CASCADED | LOCAL] CHECK OPTION]
+--
+ -- -- алгоритм MERGE
+ -- Определение предcтавления:
+ CREATE VIEW V_EXAM_RESULT AS SELECT StudentId, Mark
+ FROM EXAM_RESULT WHERE Mark = 5;
+ 
+ --  Обращение к представлению:
+ SELECT StudentId, Mark 
+ FROM V_EXAM_RESULT
+ WHERE StudentId = 345567;
+
+ -- Исполнение итогового запроса:
+ SELECT StudentId, Mark 
+ FROM EXAM_RESULT
+ WHERE Mark = 5 AND StudentId = 345567;
+
+ -- -- алгоритм TEMPTABLE
+ -- Определение представления:
+ CREATE VIEW V_STUDENT_EXAM_RESULT AS SELECT StudentId,
+ COUNT(*) AS TheBestMarkCount 
+ FROM EXAM_RESULT 
+ WHERE Mark = 5 
+ GROUP BY StudentId;
+
+ -- Обращение к представлению:
+ SELECT MAX(TheBestMarkCount) 
+ FROM V_STUDENT_EXAM_RESULT;
+
+ -- Материализация представления:
+ CREATE TEMPORARY TABLE tmp_table 
+ SELECT StudentId,
+ COUNT(*) 
+ AS TheBestMarkCount 
+ FROM EXAM_RESULT
+ WHERE Mark = 5
+ GROUP BY StudentId;
+
+ -- Получение итоговых результатов:
+ SELECT MAX(TheBestMarkCount) 
+ FROM tmp_table;
+
+ -- Уничтожение временной таблицы:
+ DROP TABLE tpm_table;
+
+
+ -- -- Использование CHECK OPTION
+ -- UPDATE: изменение данных будет происходить, 
+	только если строка с новыми значениями удовлетворяет 
+	условию WHERE в определении представления.
+ -- INSERT: добавление данных будет происходить,
+	только если новая строка удовлетворяет 
+	условию WHERE в определении представления.
+
+
+ -- -- Ключевые слова CASCADED и LOCAL
+ -- LOCAL: происходит проверка условия WHERE
+	только в собственном определении представления.
+
+ -- CASCADED: происходит проверка для всех представлений,
+	на которых основано данное представление. 
+	Значением по умолчанию является CASCADED.
+
+ --: создание обновляемого представления с CHECK OPTION
+ -- -- Определение представления:
+ CREATE VIEW V_HOME_PHONE_LIST
+ AS SELECT StudentId, PhoneType, Phone
+ FROM PHONE_LIST
+ WHERE PhoneType = 'дом' 
+ WITH CHECK OPTION;
+
+ -- --: просмотр содержимого представления
+ SELECT * FROM V_HOME_PHONE_LIST;
+
+ -- --: вставка в представление
+ INSERT INTO V_HOME_PHONE_LIST (StudentId, PhoneType, Phone )
+ VALUES (345572, 'дом', 88127878780);
+
+=======================
+==== процедуры ========
+ -- Оператор определения переменных
+	DECLARE varN INTEGER DEFAULT 3;
+	DECLARE varString VARCHAR(15) DEFAULT ‘Kate’;
+	SELECT COUNT(*) INTO varN From Table1;
+
+ -- Оператор присваивания
+	SET varN = 4;
+	SET varN := 4;
+	SET varString = ‘Bob’;
+
+-- Условный оператор
+	IF varN > 3
+	THEN delete from temp where id>40;
+	ELSE delete from temp;
+	END IF;
+
+ -- Оператор выбора
+	CASE varN
+	WHEN 2 THEN set varString := ‘Donald’;
+	WHEN 5 THEN set varString := ‘Kate’;
+	ELSE set varString := ‘Andre’;
+	END CASE;
+
+	-- или (у меня работало)
+	SUM(CASE 
+        WHEN (corner_home - corner_guest) = 0 
+        THEN 1
+        ELSE 0
+        END )	
+        AS 'draw',
+	--
+
+ -- Цикл
+ -- -- С предусловием:
+	WHILE varN < 10 DO
+	set varN := varN + 1;
+	END WHILE;
+
+
+-- Операторы выхода из цикла 
+   и перехода на следующую итерацию (LEAVE и ITERATE)
+
+	M1: loop set varN: = k + 1;
+	if varN = 5 then ITERATE M1; end if;
+	...
+	if varN > 11 then LEAVE M1; end if;
+	end loop M1;
+
+
+ --: создание процедуры в MySQL
+ ~~ создадим таблицу
+ 	CREATE TABLE tblname(x integer, y integer);
+
+ ~~ задание разделителя
+	DELIMITER $$
+
+ ~~ создание процедуры
+	CREATE PROCEDURE insert3 (n integer)
+	BEGIN
+		declare varTemp integer default 1;
+		delete from tblname where x < n + 4;
+		insert into tblname values(n + 1, varTemp);
+		insert into tblname values(n + 2, varTemp);
+		insert into tblname values(n + 3, varTemp);
+	END $$
+
+ --: вызов и удаление процедуры в MySQL
+ ~~ задание нового разделителя
+	DELIMITER ;
+ 
+ ~~ вызов процедуры
+	call insert3(8);
+
+ ~~ убедимся, что процедура отработала
+	SELECT * FROM tblname;
+
+ ~~ уничтожение процедуры
+	DROP PROCEDURE insert3;
+
+=======================
+==== функции ==========
+ --: определение мобильного телефона по номеру зачетки студента
+
+ DELIMITER $$
+ DROP FUNCTION IF EXISTS GetMobilePhoneByStudentId $$
+ 
+ ~~ создание функции
+ CREATE FUNCTION GetMobilePhoneByStudentId (p_StudentId INTEGER)
+ RETURNS VARCHAR(11) 	// тип возвращаемого значения
+ BEGIN
+	DECLARE varPhone VARCHAR(11);
+	SELECT Phone INTO varPhone
+	FROM PHONE_LIST
+	WHERE StudentId = p_StudentId AND PhoneType = 'моб'
+	LIMIT 1;
+	RETURN varPhone; -- выдача результата
+ END $$
+ DELIMITER ;
+
+ ~~: одиночный вызов функции GetMobilePhoneByStudentId
+ select GetMobilePhoneByStudentId(345568);
+ ~~: вызов функции GetMobilePhoneByStudentId (в контексте запроса)
+ SELECT GetStudentNameByPhone(Phone) 
+ AS StudentName, PhoneType, Phone
+ FROM PHONE_LIST;
+
+
+ --: вычисление среднего балла студента
+
+ DELIMITER $$
+
+ // уничтожаем функцию, если она существует
+ DROP FUNCTION IF EXISTS GetStudentAvgMark $$
+
+ // создаем функцию
+ CREATE FUNCTION GetStudentAvgMark (p_StudentId INTEGER)
+ RETURNS REAL 		//тип возвращаемого значения
+ BEGIN
+	DECLARE varStudentAvgMark REAL;
+	SELECT AVG(Mark) INTO varStudentAvgMark
+	FROM EXAM_RESULT
+	WHERE EXAM_RESULT.StudentId = p_StudentId;
+	
+	RETURN varStudentAvgMark; 		// результат
+ END $$
+ DELIMITER ;
+
+ ~~: вызов функции GetStudentAvgMark в контексте запроса
+ SELECT StudentId, StudentName, GetStudentAvgMark(StudentId) 
+ AS AvgMark
+ FROM STUDENT;
+
+=======================
+==== триггеры =========
+--
+CREATE TRIGGER trigger_name
+{BEFORE|AFTER}
+{INSERT|UPDATE|DELETE}
+ON tbl_name
+FOR EACH ROW
+trigger_body
+--
+
+ --: триггер для инициализации записей в ТEACHER
+
+ // задаем разделитель
+ DELIMITER $$
+
+ // создаем триггер
+ CREATE TRIGGER tr_ins_teacher
+ BEFORE INSERT ON TEACHER
+ FOR EACH ROW
+ BEGIN
+	DECLARE varNextTeacherId INTEGER;
+	SELECT MAX(TeacherId)+1 INTO varNextTeacherId FROM TEACHER;
+	SET NEW.TeacherId = varNextTeacherId;
+ END; $$
+
+ // задаем разделитель
+DELIMITER ;
+
+ --: триггер для аудита изменений в TEACHER
+
+ // создаем вспомогательную таблицу для аудита
+ CREATE TABLE LOG (Message VARCHAR(256), MessageDate TIMESTAMP);
+ DELIMITER $$					// задаем разделитель
+
+ CREATE TRIGGER tr_up_teacher 	//-- создаем триггер
+ AFTER UPDATE ON TEACHER FOR EACH ROW
+ BEGIN
+	IF OLD.TeacherId <> NEW.TeacherId OR OLD.TeacherName <> NEW.TeacherName
+		OR OLD.Position <> NEW.Position
+ THEN INSERT INTO LOG(Message) VALUES('Была изменена запись о преподавателе');
+	INSERT INTO LOG(Message) VALUES(CONCAT_WS(' ','Старые значения полей:',
+		OLD.TeacherId,OLD.TeacherName ,OLD.Position));
+	INSERT INTO LOG(Message) VALUES(CONCAT_WS(' ','Новые значения полей: ',
+		NEW.TeacherId,NEW.TeacherName ,NEW.Position));
+	END IF;
+ END; $$
+ DELIMITER ; 					//-- задаем разделитель
+
+
+=======================
+==== индексы ====
+
+ CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX index_name
+ ON tbl_name (index_col_name,...)
+	[index_options ...]
+ index_col_name:
+	col_name [(length)] [ASC | DESC]
+ ----
+[UNIQUE|FULLTEXT|SPATIAL] уникальный | полнотекстовый | пространственный;
+
+ -- В-дерево
+ -- Кластерный индекс
+
+ -- Создание некластерного индекса
+
+ CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX index_name
+	[index_type]
+ 	ON tbl_name (index_col_name,...)
+	[index_option]
+	[algorithm_option | lock_option] ...
+ ----
+ --: создание некластерного индекса
+ CREATE INDEX StNameIndex
+	ON STUDENT (StudentName);
+
+ --: создание составного индекса
+
+ CREATE INDEX ExamSheetIndex 
+	ON EXAM_SHEET(ClassRoom, ExamDate);
+ ----
+
+ -- Команды для создания полнотекстового индекса
+ 
+ CREATE TABLE .. FULLTEXT
+ ALTER TABLE ... FULLTEXT
+ CREATE FULLTEXT INDEX
+
+ --: создание таблицы с полнотекстовым индексом
+
+ CREATE TABLE STUDENT (
+					StudentId INTEGER PRIMARY KEY,
+					StudentName VARCHAR(50) NOT NULL,
+					GroupNumber INTEGER,
+					BirthDate DATE,
+					Address VARCHAR(50),
+					FULLTEXT (StudentName)
+ );
+
+ --: создание полнотекстового индекса
+
+ CREATE FULLTEXT INDEX StudenNameFullText ON STUDENT(StudentName);
+
+ --: поиск с помощью полнотекстового индекса
+
+ SELECT * FROM STUDENT WHERE MATCH (StudentName) AGAINST ('Федор');
+
+ --: создание hash-индекса
+ CREATE INDEX hash_student_ind
+ 	USING HASH
+ 	ON STUDENT(StudentId)
+
+=================
 ---- Черновик
 
 CREATE TABLE tab (

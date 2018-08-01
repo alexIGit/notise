@@ -1137,10 +1137,43 @@ $.toFixedWidth(value,length,fill)
   };
 })(jQuery);
 
-
-
-
 ==========================
+
+==== UI ====
+ effect(type,options,speed,callback)
+	Воспроизводит указанный эффект type для элементов в обернутом наборе.
+
+ type: 	blind, bounce, clip, drop, explode, fade, fold, highlight, puff,
+	   	pulsate, scale, shake, size, slide или transfer.
+
+  -- Синтаксис методов управления видимостью элементов
+ show(effect,options,speed,callback) 
+ hide(effect,options,speed,callback)
+ toggle(effect,options,speed,callback)
+
+ -- Синтаксис методов управления классами CSS
+ addClass(class,speed,easing,callback)
+ removeClass(class,speed,easing,callback)
+ toggleClass(class,force,speed,easing,callback)
+
+ -- Синтаксис метода switchClass
+ switchClass(removed,added,speed,easing,callback)
+
+
+ -- easing: 
+linear			 aseInOutQuart	 easeOutCirc
+swing			 easeInQuint 	 easeInOutCirc
+jswing			 easeOutQuint	 easeInElastic
+easeInQuad		 easeInOutQuint	 easeOutElastic	
+easeOutQuad 	 easeInSine		 easeInOutElastic
+easeInOutQuad	 easeOutSine 	 easeInBack
+easeInCubic		 easeInOutSine	 easeOutBack
+easeOutCubic	 easeInExpo		 easeInOutBack
+easeInOutCubic	 easeOutExpo 	 easeInBounce
+easeInQuart		 easeInOutExpo	 easeOutBounce
+easeOutQuart	 easeInCirc		 easeInOutBounce
+
+=============
 ====================================================================================================
 1. верстка.jq.Берб Бибо, Иегуда Кац - jQuery. Подробное руководство по продвинутому JavaScript (High Tech) - 2011
 
